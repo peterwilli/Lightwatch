@@ -16,6 +16,7 @@ pub type int_least8_t = i8;
 pub type uint_least8_t = u8;
 pub type int_fast8_t = i8;
 pub type uint_fast8_t = u8;
+use std::prelude::v1::*;
 extern "C" {
     pub fn fillScreen(color: u16);
 }

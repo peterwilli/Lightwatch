@@ -8,6 +8,7 @@ edition = "2018"
 xtensa-lx-rt = "0.5.0"
 xtensa-lx = "0.3.0"
 panic-halt = "0.2.0"
+no-std-compat = { version = "0.4.1", features = [ "alloc" ] }
 
 # because we cant have optional dev-deps, these must go here
 esp32-hal = { version = "0.2.0", optional = true }
