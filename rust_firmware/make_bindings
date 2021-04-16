@@ -1,0 +1,4 @@
+#!/bin/bash
+bindings=$(bindgen '../MainFirmware/LightwatchCDriver.h')
+# Remove references to std
+echo -n "$bindings" | sed '/::std/d' > src/c_bindings.rs

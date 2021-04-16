@@ -1,0 +1,8 @@
+#!/bin/bash
+# (relatively) universal setenv, you probably need to change if you use another platform such as Windows.
+CUSTOM_RUSTC="../rust-xtensa"
+export PATH="$PATH:../xtensa-esp32-elf/bin"
+export RUST_BACKTRACE=1 
+export XARGO_RUST_SRC=$CUSTOM_RUSTC/library # or /src for an older compiler
+export RUSTC=$CUSTOM_RUSTC/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
+export RUSTDOC=$CUSTOM_RUSTC/build/x86_64-unknown-linux-gnu/stage2/bin/rustdoc

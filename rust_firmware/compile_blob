@@ -1,0 +1,3 @@
+#!/bin/sh
+cargo xbuild --features="xtensa-lx-rt/lx6,xtensa-lx/lx6,esp32-hal"
+cp target/xtensa-esp32-none-elf/debug/liblightwatch_firmware.a ../rust_blob_library/src/esp32
