@@ -1,5 +1,4 @@
 use core::alloc::{GlobalAlloc, Layout};
-use std::prelude::v1::*;
 extern {
     fn malloc(size: usize) -> *mut u8;
     fn free(ptr: *mut u8);
