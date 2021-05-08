@@ -1,15 +1,16 @@
 use crate::system_applications::system_application::*;
 use crate::alloc::string::ToString;
+use crate::gui::*;
 use alloc::vec;
 
-pub struct ActivityApplication;
+pub struct HomeScreenApplication;
 
 impl SystemApplication for ActivityApplication {
     fn get_info(&self) -> SystemApplicationInfo {
         return SystemApplicationInfo {
-            id: "lightwatch.activity".to_string(),
-            name: "Activity".to_string(),
-            description: "Fitness activity application".to_string(),
+            id: "lightwatch.home".to_string(),
+            name: "Home".to_string(),
+            description: "Home screen".to_string(),
             extras: vec![Extra::BackgroundLoop]
         }
     }

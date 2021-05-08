@@ -10,6 +10,7 @@ use libc_alloc::*;
 mod c_bindings;
 use c_bindings::*;
 
+mod gui;
 mod system_applications;
 
 extern crate alloc;
@@ -36,8 +37,10 @@ pub extern "C" fn rust_bb_loop() {
         let is_touched = getTouch(&mut x, &mut y) == 1;
         if is_touched {
             let hello = CString::new(format!("is_touched: {} {}", x, y)).expect("CString::new failed");
-            serialPrintln(hello.as_ptr());
-
+            // serialPrintln(hello.as_ptr());
+            fillScreen(10);
+            setTextColor(400);
+            drawString(hello.as_ptr(), 10, 10, 7);
             drawLine(3,3, 200, 100, 99999);
         }
     }

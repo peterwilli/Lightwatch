@@ -23,7 +23,19 @@ extern "C" {
     pub fn serialPrintln(text: *const cstr_core::c_char);
 }
 extern "C" {
+    pub fn setTextColor(c: u16);
+}
+extern "C" {
+    pub fn drawString(string: *const cstr_core::c_char, x: i32, y: i32, font: u8) -> i16;
+}
+extern "C" {
+    pub fn setTextDatum(datum: u8);
+}
+extern "C" {
     pub fn drawLine(xs: i32, ys: i32, xe: i32, ye: i32, color: u32);
+}
+extern "C" {
+    pub fn pushImage(x0: i32, y0: i32, w: i32, h: i32, data: *mut u16);
 }
 extern "C" {
     pub fn getTouch(x: *mut i16, y: *mut i16) -> u8;
