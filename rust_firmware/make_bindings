@@ -1,4 +1,8 @@
 #!/bin/bash
-bindings=$(bindgen '../MainFirmware/LightwatchCDriver.h')
-# Remove references to std
-echo -n "$bindings" | sed '/::std/d' > src/c_bindings.rs
+bindings=$(bindgen --use-core '../MainFirmware/LightwatchCDriver.h')
+echo -n "$bindings" \
+    `# Replace std::os with cstr_core` \
+    | sed 's/::std::os::raw::c_char/cstr_core::c_char/g' \
+    `# Remove references to std` \
+    | sed '/::std/d' \
+    > src/c_bindings.rs

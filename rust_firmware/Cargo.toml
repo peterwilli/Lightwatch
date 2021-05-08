@@ -8,6 +8,7 @@ edition = "2018"
 xtensa-lx-rt = "0.5.0"
 xtensa-lx = "0.3.0"
 panic-halt = "0.2.0"
+cstr_core = "0.2.3"
 #rune = { path = "/home/peter/Projects/nostdcompat_patcher/output/cargo_root/registry/src/github.com-1ecc6299db9ec823/rune-0.9.0", default-features = false }
 
 # because we cant have optional dev-deps, these must go here

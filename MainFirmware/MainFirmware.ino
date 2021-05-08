@@ -1,10 +1,6 @@
 #include <lightwatch_rust_blob.h>
 #include "LightwatchCDriver.h"
 
-void initWatchDriver() {
-  Serial.begin(115200);
-}
-
 void screenTest() {
     Serial.println("R");
     ttgo->tft->fillScreen(TFT_RED);
@@ -19,6 +15,7 @@ void screenTest() {
 
 void setup()
 {
+    Serial.begin(115200);
     initLightwatchCDriver();
     screenTest();
     rust_bb_init();
@@ -26,4 +23,5 @@ void setup()
 
 void loop()
 {
+  rust_bb_loop();
 }

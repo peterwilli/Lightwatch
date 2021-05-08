@@ -19,3 +19,9 @@ pub type uint_fast8_t = u8;
 extern "C" {
     pub fn fillScreen(color: u16);
 }
+extern "C" {
+    pub fn serialPrintln(text: *const cstr_core::c_char);
+}
+extern "C" {
+    pub fn getTouch(x: *mut i16, y: *mut i16) -> u8;
+}

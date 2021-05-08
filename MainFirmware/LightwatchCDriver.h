@@ -13,6 +13,8 @@ void initLightwatchCDriver();
 extern "C" {
 #endif
     void fillScreen(uint16_t color);
+    void serialPrintln(const char* text);
+    uint8_t getTouch(int16_t &x, int16_t &y);
 #ifdef __cplusplus
 } //end extern "C"
 #endif
