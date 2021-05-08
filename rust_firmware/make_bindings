@@ -1,8 +1,15 @@
 #!/bin/bash
-bindings=$(bindgen --use-core '../MainFirmware/LightwatchCDriver.h')
+tmpfile=$(mktemp /tmp/bindings_generation.XXXXXX.h)
+echo "tmpfile: $tmpfile"
+source=$(cat '../MainFirmware/LightwatchCDriver.h')
+echo -n "$source" \
+    | sed 's/&/*/g' \
+    > "$tmpfile"
+bindings=$(bindgen --use-core "$tmpfile")
 echo -n "$bindings" \
     `# Replace std::os with cstr_core` \
     | sed 's/::std::os::raw::c_char/cstr_core::c_char/g' \
     `# Remove references to std` \
     | sed '/::std/d' \
     > src/c_bindings.rs
+rm "$tmpfile"

@@ -37,6 +37,8 @@ pub extern "C" fn rust_bb_loop() {
         if is_touched {
             let hello = CString::new(format!("is_touched: {} {}", x, y)).expect("CString::new failed");
             serialPrintln(hello.as_ptr());
+
+            drawLine(3,3, 200, 100, 99999);
         }
     }
 }
