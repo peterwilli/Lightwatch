@@ -3,9 +3,19 @@ use crate::alloc::string::ToString;
 use crate::gui::*;
 use alloc::vec;
 
-pub struct HomeScreenApplication;
+pub struct HomeScreenApplication<'a> {
+    gui_renderer: GUIRenderer<'a>
+}
 
-impl SystemApplication for ActivityApplication {
+impl SystemApplication for HomeScreenApplication<'_> {
+    fn new() -> Self {
+        return {
+            HomeScreenApplication {
+                gui_renderer: GUIRenderer::new()
+            }
+        }
+    }
+
     fn get_info(&self) -> SystemApplicationInfo {
         return SystemApplicationInfo {
             id: "lightwatch.home".to_string(),

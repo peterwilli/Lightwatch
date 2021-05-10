@@ -1,10 +1,21 @@
 use crate::system_applications::system_application::*;
 use crate::alloc::string::ToString;
+use crate::gui::*;
 use alloc::vec;
 
-pub struct ActivityApplication;
+pub struct ActivityApplication<'a> {
+    gui_renderer: GUIRenderer<'a>
+}
 
 impl SystemApplication for ActivityApplication {
+    fn new() -> Self {
+        return {
+            ActivityApplication {
+                gui_renderer: GUIRenderer::new()
+            }
+        }
+    }
+
     fn get_info(&self) -> SystemApplicationInfo {
         return SystemApplicationInfo {
             id: "lightwatch.activity".to_string(),
