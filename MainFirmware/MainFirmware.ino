@@ -20,8 +20,3 @@ void setup()
     screenTest();
     rust_bb_init();
 }
-
-void loop()
-{
-  rust_bb_loop();
-}

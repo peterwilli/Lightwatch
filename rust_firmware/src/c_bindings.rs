@@ -17,10 +17,13 @@ pub type uint_least8_t = u8;
 pub type int_fast8_t = i8;
 pub type uint_fast8_t = u8;
 extern "C" {
-    pub fn fillScreen(color: u16);
+    pub fn serialPrintln(text: *const cstr_core::c_char);
 }
 extern "C" {
-    pub fn serialPrintln(text: *const cstr_core::c_char);
+    pub fn millis() -> u32;
+}
+extern "C" {
+    pub fn fillScreen(color: u16);
 }
 extern "C" {
     pub fn setTextColor(c: u16);

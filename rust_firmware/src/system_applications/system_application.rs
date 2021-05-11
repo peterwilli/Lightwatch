@@ -15,7 +15,7 @@ pub struct SystemApplicationInfo {
 pub trait SystemApplication {
     fn new() -> Self where Self: Sized;
     fn get_info(&self) -> SystemApplicationInfo;
-    fn init(&self);
-    fn r#loop(&self);
+    fn init(&mut self);
+    fn r#loop(&mut self);
     fn background_loop(&self) {}
 }

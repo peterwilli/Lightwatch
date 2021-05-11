@@ -31,7 +31,7 @@ use no_std_compat::sync::Mutex;
 static A: LibcAllocator = LibcAllocator;
 
 struct WatchState {
-    currentApplication: Arc<SystemApplication>
+    currentApplication: Arc<Mutex<SystemApplication>>
 }
 
 unsafe impl Send for WatchState {}
@@ -39,16 +39,15 @@ unsafe impl Sync for WatchState {}
 
 lazy_static! {
     static ref WATCH_STATE: WatchState = WatchState {
-        currentApplication: Arc::new(HomeScreenApplication::new())
+        currentApplication: Arc::new(Mutex::new(HomeScreenApplication::new()))
     };
 }
 
 #[no_mangle]
 pub extern "C" fn rust_bb_init() {
-    WATCH_STATE.currentApplication.init();
-}
-
-#[no_mangle]
-pub extern "C" fn rust_bb_loop() {
-    WATCH_STATE.currentApplication.r#loop();
+    let mut currentApp = WATCH_STATE.currentApplication.lock();
+    currentApp.init();
+    loop {
+        currentApp.r#loop();
+    }
 }

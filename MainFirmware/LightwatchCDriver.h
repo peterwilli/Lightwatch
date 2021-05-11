@@ -12,10 +12,12 @@ void initLightwatchCDriver();
 #ifdef __cplusplus
 extern "C" {
 #endif
-    void fillScreen(uint16_t color);
+    // System stuff
     void serialPrintln(const char* text);
-    
+    uint32_t millis();
+
     // Drawing
+    void fillScreen(uint16_t color);
     void setTextColor(uint16_t c);    
     int16_t drawString(const char *string, int32_t x, int32_t y, uint8_t font);  // Draw string using specifed font number
     void setTextDatum(uint8_t datum);
