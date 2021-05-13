@@ -7,14 +7,14 @@ extern crate lazy_static;
 extern crate no_std_compat as std;
 use std::prelude::v1::*;
 use panic_halt as _;
-use cstr_core::{CString, CStr};
-use cstr_core::c_char;
+
+
 
 mod libc_alloc;
 use libc_alloc::*;
 
 mod c_bindings;
-use c_bindings::*;
+
 
 mod gui;
 mod system_applications;
@@ -22,8 +22,8 @@ use system_applications::*;
 
 extern crate alloc;
 
-use alloc::vec;
-use alloc::format;
+
+
 use alloc::sync::Arc;
 use no_std_compat::sync::Mutex;
 
@@ -31,7 +31,7 @@ use no_std_compat::sync::Mutex;
 static A: LibcAllocator = LibcAllocator;
 
 struct WatchState {
-    currentApplication: Arc<Mutex<SystemApplication>>
+    currentApplication: Arc<Mutex<dyn SystemApplication>>
 }
 
 unsafe impl Send for WatchState {}

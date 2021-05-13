@@ -2,12 +2,12 @@ use crate::system_applications::system_application::*;
 use crate::alloc::string::ToString;
 use crate::gui::*;
 use alloc::vec;
-use cstr_core::{CString, CStr};
-use cstr_core::c_char;
+
+
 use crate::c_bindings::*;
 use std::prelude::v1::*;
-use alloc::sync::Arc;
-use no_std_compat::sync::Mutex;
+
+
 
 pub struct HomeScreenApplication {
     gui_renderer: GUIRenderer

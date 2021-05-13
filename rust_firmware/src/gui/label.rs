@@ -1,7 +1,7 @@
 use crate::gui::GuiWidget;
 use crate::c_bindings::*;
 use alloc::string::String;
-use cstr_core::{CString, CStr};
+use cstr_core::{CString};
 
 pub struct Label {
     pub x: i16,
