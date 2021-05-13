@@ -9,20 +9,11 @@ use std::prelude::v1::*;
 use alloc::sync::Arc;
 use no_std_compat::sync::Mutex;
 
-pub struct HomeScreenApplication<'a> {
-    gui_renderer: GUIRenderer<'a>
+pub struct HomeScreenApplication {
+    gui_renderer: GUIRenderer
 }
 
-lazy_static! {
-    static ref GUI_RENDERER: Arc<Mutex<GUIRenderer<'static>>> = Arc::new(Mutex::new(GUIRenderer {
-        needs_redraw: true,
-        elements: vec![
-
-        ]
-    }));
-}
-
-impl SystemApplication for HomeScreenApplication<'_> {
+impl SystemApplication for HomeScreenApplication {
     fn new() -> Self {
         return {
             HomeScreenApplication {
@@ -45,10 +36,9 @@ impl SystemApplication for HomeScreenApplication<'_> {
             fillScreen(1929);
             setTextColor(400);
         }
-        let mut gui_renderer = GUI_RENDERER.lock();
-        let mut label = Label::new(0, 0, 100, 100);
-        label.text = Some("test".to_string());
-        gui_renderer.elements.push(&label);
+        let mut label = Box::new(Label::new(10, 10, 100, 100));
+        label.text = Some("Hello Love TCSD".to_string());
+        self.gui_renderer.elements.push(label);
     }
 
     fn r#loop(&mut self) {
@@ -56,12 +46,7 @@ impl SystemApplication for HomeScreenApplication<'_> {
             let mut x:i16 = 0;
             let mut y:i16 = 0;
             let is_touched = getTouch(&mut x, &mut y) == 1;
-            if is_touched {
-                let hello = CString::new(format!("{} {}", x, y)).expect("CString::new failed");
-                // serialPrintln(hello.as_ptr());
-                fillScreen(10);
-                drawString(hello.as_ptr(), 10, 10, 7);
-            }
+            self.gui_renderer.r#loop();
         }
     }
 }

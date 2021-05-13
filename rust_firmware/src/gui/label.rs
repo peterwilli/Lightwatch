@@ -27,7 +27,7 @@ impl GuiWidget for Label {
     fn draw(&self) {
         unsafe {
             let c_str = CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
-            drawString(c_str.as_ptr(), self.x.into(), self.y.into(), 0);
+            drawString(c_str.as_ptr(), self.x.into(), self.y.into(), 1);
         }
     }
 }
