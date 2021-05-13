@@ -42,11 +42,6 @@ impl SystemApplication for HomeScreenApplication {
     }
 
     fn r#loop(&mut self) {
-        unsafe {
-            let mut x:i16 = 0;
-            let mut y:i16 = 0;
-            let is_touched = getTouch(&mut x, &mut y) == 1;
-            self.gui_renderer.r#loop();
-        }
+        self.gui_renderer.r#loop();
     }
 }
