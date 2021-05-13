@@ -20,9 +20,6 @@ extern "C" {
     pub fn serialPrintln(text: *const cstr_core::c_char);
 }
 extern "C" {
-    pub fn millis() -> u32;
-}
-extern "C" {
     pub fn fillScreen(color: u16);
 }
 extern "C" {

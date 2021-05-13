@@ -1,4 +1,5 @@
 #include "LightwatchCDriver.h"
+#include <WiFi.h>
 
 TTGOClass *ttgo;
 

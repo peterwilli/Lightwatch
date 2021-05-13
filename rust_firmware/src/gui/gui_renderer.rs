@@ -1,6 +1,7 @@
 use alloc::vec::Vec;
 use crate::gui::GuiWidget;
 use crate::c_bindings::*;
+use crate::non_official_c_bindings::*;
 use alloc::prelude::v1::Box;
 
 // TODO: https://stackoverflow.com/questions/25818082/vector-of-objects-belonging-to-a-trait
