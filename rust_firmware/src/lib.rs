@@ -14,7 +14,7 @@ use serial_logger::SerialLogger;
 mod c_bindings;
 use c_bindings::*;
 mod non_official_c_bindings;
-use crate::non_official_c_bindings::delay;
+
 mod gui;
 mod system_applications;
 use system_applications::*;

@@ -25,7 +25,7 @@ impl GuiWidget for Label {
         };
     }
 
-    fn r#loop(&mut self, touch_event: &TouchEvent, needs_redraw: &mut bool) {
+    fn r#loop(&mut self, _touch_event: &TouchEvent, _needs_redraw: &mut bool) {
         unsafe {
             let c_str = CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
             drawString(c_str.as_ptr(), self.x.into(), self.y.into(), self.font);

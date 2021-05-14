@@ -1,13 +1,12 @@
 use crate::gui::GuiWidget;
-use crate::gui::Tap;
 use crate::c_bindings::*;
 use alloc::string::String;
 use cstr_core::{CString};
 use alloc::prelude::v1::Box;
 use crate::gui::touch_event::TouchEvent;
 use crate::gui::event_checks::widget_is_tapped;
-use alloc::format;
-use crate::SerialLogger;
+
+
 use alloc::sync::Arc;
 use no_std_compat::sync::Mutex;
 
@@ -38,7 +37,7 @@ impl GuiWidget for Button {
         };
     }
 
-    fn r#loop(&mut self, touch_event: &TouchEvent, needs_redraw: &mut bool) {
+    fn r#loop(&mut self, touch_event: &TouchEvent, _needs_redraw: &mut bool) {
         unsafe {
             let c_str = CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
             drawString(c_str.as_ptr(), self.x.into(), self.y.into(), self.font);

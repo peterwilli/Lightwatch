@@ -1,5 +1,4 @@
 mod gui_widget;
-mod tap;
 mod gui_renderer;
 mod scroll_list;
 mod label;
@@ -8,7 +7,6 @@ mod touch_event;
 mod event_checks;
 
 pub use gui_widget::*;
-pub use tap::*;
 pub use scroll_list::*;
 pub use label::*;
 pub use button::*;

@@ -3,7 +3,7 @@ use crate::alloc::string::ToString;
 use crate::gui::*;
 use alloc::vec;
 use cstr_core::{CString};
-use crate::SerialLogger;
+
 
 use crate::c_bindings::*;
 use std::prelude::v1::*;
