@@ -1,5 +1,5 @@
 use core::alloc::{GlobalAlloc, Layout};
-extern {
+extern "C" {
     fn malloc(size: usize) -> *mut u8;
     fn free(ptr: *mut u8);
     fn write(file: isize, buffer: *const u8, count: usize) -> usize;

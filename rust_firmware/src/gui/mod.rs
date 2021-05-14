@@ -1,13 +1,12 @@
-mod gui_widget;
-mod gui_renderer;
-mod scroll_list;
-mod label;
 mod button;
-mod touch_event;
 mod event_checks;
+mod gui_renderer;
+mod gui_widget;
+mod label;
+mod scroll_list;
+mod touch_event;
 
-pub use gui_widget::*;
-pub use scroll_list::*;
-pub use label::*;
 pub use button::*;
-pub use gui_renderer::*;
+pub use gui_renderer::*;pub use gui_widget::*;
+pub use label::*;
+pub use scroll_list::*;

@@ -1,8 +1,9 @@
 // mod activity;
-mod system_application;
+mod activity;
 mod home;
+mod system_application;
 
 pub use crate::gui::*;
-// pub use activity::*;
+pub use activity::*;
 pub use home::*;
 pub use system_application::*;

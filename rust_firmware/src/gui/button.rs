@@ -1,11 +1,10 @@
-use crate::gui::GuiWidget;
 use crate::c_bindings::*;
-use alloc::string::String;
-use cstr_core::{CString};
-use alloc::prelude::v1::Box;
-use crate::gui::touch_event::TouchEvent;
 use crate::gui::event_checks::widget_is_tapped;
-
+use crate::gui::touch_event::TouchEvent;
+use crate::gui::GuiWidget;
+use alloc::prelude::v1::Box;
+use alloc::string::String;
+use cstr_core::CString;
 
 use alloc::sync::Arc;
 use no_std_compat::sync::Mutex;
@@ -19,7 +18,7 @@ pub struct Button {
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,
     pub is_pressed: bool,
-    needs_redraw: Option<Arc<Mutex<bool>>>
+    needs_redraw: Option<Arc<Mutex<bool>>>,
 }
 
 impl GuiWidget for Button {
@@ -33,13 +32,14 @@ impl GuiWidget for Button {
             font: 1,
             is_pressed: false,
             on_tap: None,
-            needs_redraw: None
+            needs_redraw: None,
         };
     }
 
     fn r#loop(&mut self, touch_event: &TouchEvent, _needs_redraw: &mut bool) {
         unsafe {
-            let c_str = CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
+            let c_str =
+                CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
             drawString(c_str.as_ptr(), self.x.into(), self.y.into(), self.font);
 
             let is_pressed = widget_is_tapped(self.x, self.y, self.w, self.h, touch_event);

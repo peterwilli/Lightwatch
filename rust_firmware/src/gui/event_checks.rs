@@ -1,6 +1,5 @@
 use crate::gui::touch_event::TouchEvent;
 
-
 pub fn widget_is_tapped(
     widget_x: i16,
     widget_y: i16,
