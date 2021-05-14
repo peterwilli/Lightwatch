@@ -20,6 +20,9 @@ extern "C" {
     pub fn serialPrintln(text: *const cstr_core::c_char);
 }
 extern "C" {
+    pub fn setBrightness(brightness: u8);
+}
+extern "C" {
     pub fn fillScreen(color: u16);
 }
 extern "C" {

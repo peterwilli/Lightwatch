@@ -3,6 +3,10 @@
 
 TTGOClass *ttgo;
 
+void setBrightness(uint8_t brightness) {
+    ttgo->bl->adjust(brightness);
+}
+
 void fillScreen(uint16_t color) {
     ttgo->tft->fillScreen(color);
 }

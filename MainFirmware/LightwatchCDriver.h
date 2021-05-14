@@ -14,6 +14,8 @@ extern "C" {
 #endif
     // System stuff
     void serialPrintln(const char* text);
+    void setBrightness(uint8_t brightness);
+        
 
     // Drawing
     void fillScreen(uint16_t color);

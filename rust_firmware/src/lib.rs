@@ -12,6 +12,7 @@ use libc_alloc::*;
 mod serial_logger;
 use serial_logger::SerialLogger;
 mod c_bindings;
+use c_bindings::*;
 mod non_official_c_bindings;
 use crate::non_official_c_bindings::delay;
 mod gui;
@@ -41,27 +42,12 @@ lazy_static! {
 
 #[no_mangle]
 pub extern "C" fn rust_bb_init() {
+    unsafe {
+        setBrightness(150);
+    }
+
     let mut current_app = WATCH_STATE.current_application.lock();
     current_app.init();
-
-    SerialLogger::println("Test 1".to_string());
-    unsafe {
-        delay(1000);
-    }
-    SerialLogger::set_debug_in_memory(true);
-    SerialLogger::println("Test 2".to_string());
-    SerialLogger::println("Test 3".to_string());
-    SerialLogger::set_debug_in_memory(false);
-
-    SerialLogger::println("New Test 1".to_string());
-    unsafe {
-        delay(1000);
-    }
-    SerialLogger::set_debug_in_memory(true);
-    SerialLogger::println("Test 2".to_string());
-    SerialLogger::println("Test 3".to_string());
-    SerialLogger::set_debug_in_memory(false);
-
     loop {
         current_app.r#loop();
     }
