@@ -2,6 +2,7 @@ use crate::gui::GuiWidget;
 use crate::c_bindings::*;
 use alloc::string::String;
 use cstr_core::{CString};
+use crate::gui::touch_event::TouchEvent;
 
 pub struct Label {
     pub x: i16,
@@ -24,10 +25,10 @@ impl GuiWidget for Label {
         };
     }
 
-    fn draw(&self) {
+    fn r#loop(&mut self, touch_event: &TouchEvent, needs_redraw: &mut bool) {
         unsafe {
             let c_str = CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
-            drawString(c_str.as_ptr(), self.x.into(), self.y.into(), 1);
+            drawString(c_str.as_ptr(), self.x.into(), self.y.into(), self.font);
         }
     }
 }

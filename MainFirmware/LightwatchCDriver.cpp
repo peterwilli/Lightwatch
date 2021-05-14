@@ -2,6 +2,7 @@
 #include <WiFi.h>
 
 TTGOClass *ttgo;
+bool irq = false;
 
 void setBrightness(uint8_t brightness) {
     ttgo->bl->adjust(brightness);
@@ -36,4 +37,17 @@ void initLightwatchCDriver() {
   ttgo->begin();
   ttgo->openBL();
   ttgo->tft->setTextFont(1);
+
+  pinMode(AXP202_INT, INPUT_PULLUP);
+  attachInterrupt(AXP202_INT, [] {
+      irq = true;
+  }, FALLING);
+
+  ttgo->power->enableIRQ(AXP202_PEK_SHORTPRESS_IRQ,
+                   true);
+
+ //  Clear interrupt status
+  ttgo->power->clearIRQ();
+
+  
 }

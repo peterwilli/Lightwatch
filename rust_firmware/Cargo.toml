@@ -11,6 +11,7 @@ panic-halt = "0.2.0"
 cstr_core = "0.2.3"
 no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
 lazy_static = { version = "1.4.0", features = ["spin_no_std"]}
+impls = "1.0.3"
 #rune = { path = "/home/peter/Projects/nostdcompat_patcher/output/cargo_root/registry/src/github.com-1ecc6299db9ec823/rune-0.9.0", default-features = false }
 
 # because we cant have optional dev-deps, these must go here
