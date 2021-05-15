@@ -1,0 +1,1 @@
+pub fn toggle_in_memory_logging(is_touched, button_)

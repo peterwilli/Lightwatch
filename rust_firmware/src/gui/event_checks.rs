@@ -1,4 +1,4 @@
-use crate::gui::touch_event::TouchEvent;
+use crate::touch_event::TouchEvent;
 
 pub fn widget_is_tapped(
     widget_x: i16,

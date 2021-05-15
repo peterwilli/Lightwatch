@@ -15,6 +15,8 @@ mod c_bindings;
 use c_bindings::*;
 mod non_official_c_bindings;
 use non_official_c_bindings::*;
+mod touch_event;
+use crate::touch_event::*;
 
 mod gui;
 mod system_applications;
@@ -36,6 +38,8 @@ pub extern "C" fn rust_bb_init() {
     current_app.init();
     loop {
         unsafe {
+            let is_touched = unsafe { getTouch(&mut touch_event.x, &mut touch_event.y) == 1 };
+            touch_event.is_touched = is_touched;
             serial_logger::SerialLogger::println(format!("readIRQ: {}", readIRQ()));
             delay(1000);
         }

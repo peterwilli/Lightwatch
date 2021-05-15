@@ -4,9 +4,9 @@ mod gui_renderer;
 mod gui_widget;
 mod label;
 mod scroll_list;
-mod touch_event;
 
 pub use button::*;
-pub use gui_renderer::*;pub use gui_widget::*;
+pub use gui_renderer::*;
+pub use gui_widget::*;
 pub use label::*;
 pub use scroll_list::*;

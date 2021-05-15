@@ -1,6 +1,6 @@
 use crate::c_bindings::*;
-use crate::gui::touch_event::TouchEvent;
 use crate::gui::GuiWidget;
+use crate::touch_event::TouchEvent;
 use alloc::string::String;
 use cstr_core::CString;
 

@@ -1,7 +1,8 @@
 use crate::c_bindings::*;
-use crate::gui::touch_event::TouchEvent;
 use crate::gui::GuiWidget;
 use crate::non_official_c_bindings::*;
+use crate::touch_event::touch_event;
+use crate::touch_event::TouchEvent;
 use alloc::prelude::v1::Box;
 use alloc::vec::Vec;
 
@@ -14,11 +15,6 @@ unsafe impl Send for GUIRenderer {}
 unsafe impl Sync for GUIRenderer {}
 
 static mut last_time_render: u32 = 0;
-static mut touch_event: TouchEvent = TouchEvent {
-    x: 0,
-    y: 0,
-    is_touched: false,
-};
 static mut last_touch_event: TouchEvent = TouchEvent {
     x: 0,
     y: 0,
@@ -38,9 +34,7 @@ impl GUIRenderer {
     }
 
     pub fn r#loop(&mut self) {
-        let is_touched = unsafe { getTouch(&mut touch_event.x, &mut touch_event.y) == 1 };
         unsafe {
-            touch_event.is_touched = is_touched;
             if !(last_touch_event.is_touched == touch_event.is_touched
                 && last_touch_event.x == touch_event.x
                 && last_touch_event.y == touch_event.y)

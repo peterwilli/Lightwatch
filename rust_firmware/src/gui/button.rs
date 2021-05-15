@@ -1,7 +1,7 @@
 use crate::c_bindings::*;
 use crate::gui::event_checks::widget_is_tapped;
-use crate::gui::touch_event::TouchEvent;
 use crate::gui::GuiWidget;
+use crate::touch_event::TouchEvent;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
 use cstr_core::CString;
