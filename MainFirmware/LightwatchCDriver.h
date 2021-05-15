@@ -7,12 +7,24 @@
 #include "config.h"
 extern TTGOClass *ttgo;
 void initLightwatchCDriver();
+#else
+struct bma4_accel {
+    /*! Accel X data */
+    int16_t x;
+    /*! Accel Y data */
+    int16_t y;
+    /*! Accel Z data */
+    int16_t z;
+};
+typedef struct bma4_accel Accel;
 #endif // end Arduino
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     // System stuff
+    void enableAccelerometer();
+    bool readAccelerometer(Accel &accel);
     void serialPrintln(const char* text);
     void setBrightness(uint8_t brightness);
     uint8_t readIRQ();

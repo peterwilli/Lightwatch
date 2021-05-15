@@ -1,9 +1,12 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
+use crate::non_official_c_bindings::*;
 use crate::system_applications::system_application::*;
 use crate::SerialLogger;
+use alloc::format;
 use alloc::vec;
+use core::ffi::c_void;
 use cstr_core::CString;
 
 pub struct ActivityApplication {
@@ -30,6 +33,7 @@ impl SystemApplication for ActivityApplication {
 
     fn init(&mut self) {
         unsafe {
+            // enableAccelerometer();
             fillScreen(2821);
             setTextColor(400);
 
@@ -38,5 +42,12 @@ impl SystemApplication for ActivityApplication {
         }
     }
 
-    fn r#loop(&mut self) {}
+    fn r#loop(&mut self) {
+        unsafe {
+            let mut accel = Accel { x: 0, y: 0, z: 0 };
+            let x = readAccelerometer(&mut accel);
+            SerialLogger::println(format!("accel: {}x{}x{}", accel.x, accel.y, accel.z));
+            delay(100);
+        }
+    }
 }

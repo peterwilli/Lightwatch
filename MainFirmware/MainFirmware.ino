@@ -17,7 +17,7 @@ void setup()
 {
     Serial.begin(115200);
     initLightwatchCDriver();
-    screenTest();
+//    screenTest();
     rust_bb_init();
 }
 
