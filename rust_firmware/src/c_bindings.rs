@@ -23,6 +23,12 @@ extern "C" {
     pub fn setBrightness(brightness: u8);
 }
 extern "C" {
+    pub fn readIRQ() -> u8;
+}
+extern "C" {
+    pub fn getPinAXP202() -> u8;
+}
+extern "C" {
     pub fn fillScreen(color: u16);
 }
 extern "C" {

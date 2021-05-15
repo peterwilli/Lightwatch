@@ -15,6 +15,10 @@ extern "C" {
     // System stuff
     void serialPrintln(const char* text);
     void setBrightness(uint8_t brightness);
+    uint8_t readIRQ();
+
+    // Pin numbers (Idk how else to do this)
+    uint8_t getPinAXP202();
         
     // Drawing
     void fillScreen(uint16_t color);

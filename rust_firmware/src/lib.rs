@@ -14,6 +14,7 @@ use serial_logger::SerialLogger;
 mod c_bindings;
 use c_bindings::*;
 mod non_official_c_bindings;
+use non_official_c_bindings::*;
 
 mod gui;
 mod system_applications;
@@ -34,6 +35,10 @@ pub extern "C" fn rust_bb_init() {
     let mut current_app = HomeScreenApplication::new();
     current_app.init();
     loop {
+        unsafe {
+            serial_logger::SerialLogger::println(format!("readIRQ: {}", readIRQ()));
+            delay(1000);
+        }
         current_app.r#loop();
     }
 }

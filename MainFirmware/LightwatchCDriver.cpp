@@ -32,6 +32,10 @@ uint8_t getTouch(int16_t &x, int16_t &y) {
   return ttgo->getTouch(x, y) ? 1 : 0;
 }
 
+uint8_t getPinAXP202() {
+  return AXP202_INT;
+}
+
 void initLightwatchCDriver() {
   ttgo = TTGOClass::getWatch();
   ttgo->begin();
@@ -39,15 +43,25 @@ void initLightwatchCDriver() {
   ttgo->tft->setTextFont(1);
 
   pinMode(AXP202_INT, INPUT_PULLUP);
+  pinMode(AXP202_INT, INPUT_PULLUP);
   attachInterrupt(AXP202_INT, [] {
       irq = true;
   }, FALLING);
 
-  ttgo->power->enableIRQ(AXP202_PEK_SHORTPRESS_IRQ,
-                   true);
-
- //  Clear interrupt status
+  //!Clear IRQ unprocessed  first
+  ttgo->power->enableIRQ(AXP202_PEK_SHORTPRESS_IRQ | AXP202_VBUS_REMOVED_IRQ | AXP202_VBUS_CONNECT_IRQ | AXP202_CHARGING_IRQ, true);
   ttgo->power->clearIRQ();
+}
 
-  
+uint8_t readIRQ() {
+  uint8_t result = 0;
+  if(irq) {
+    irq = false;
+    ttgo->power->readIRQ();
+    if(ttgo->power->isPEKShortPressIRQ()) {
+      result = 1;
+    }
+    ttgo->power->clearIRQ();
+  }
+  return result;
 }
