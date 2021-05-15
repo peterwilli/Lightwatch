@@ -1,8 +1,7 @@
 use crate::c_bindings::*;
 use crate::gui::GuiWidget;
+use crate::input::*;
 use crate::non_official_c_bindings::*;
-use crate::touch_event::touch_event;
-use crate::touch_event::TouchEvent;
 use alloc::prelude::v1::Box;
 use alloc::vec::Vec;
 
@@ -15,7 +14,7 @@ unsafe impl Send for GUIRenderer {}
 unsafe impl Sync for GUIRenderer {}
 
 static mut last_time_render: u32 = 0;
-static mut last_touch_event: TouchEvent = TouchEvent {
+static mut last_touch_input: TouchInput = TouchInput {
     x: 0,
     y: 0,
     is_touched: false,
@@ -35,14 +34,14 @@ impl GUIRenderer {
 
     pub fn r#loop(&mut self) {
         unsafe {
-            if !(last_touch_event.is_touched == touch_event.is_touched
-                && last_touch_event.x == touch_event.x
-                && last_touch_event.y == touch_event.y)
+            if !(last_touch_input.is_touched == touch_input.is_touched
+                && last_touch_input.x == touch_input.x
+                && last_touch_input.y == touch_input.y)
             {
                 self.needs_redraw = true;
-                last_touch_event.is_touched = touch_event.is_touched;
-                last_touch_event.x = touch_event.x;
-                last_touch_event.y = touch_event.y;
+                last_touch_input.is_touched = touch_input.is_touched;
+                last_touch_input.x = touch_input.x;
+                last_touch_input.y = touch_input.y;
             }
         }
         // Redraw if needed
@@ -51,7 +50,7 @@ impl GUIRenderer {
             if self.needs_redraw && (timestamp - last_time_render) > redraw_time {
                 self.needs_redraw = false;
                 for element in &mut self.elements {
-                    element.r#loop(&touch_event, &mut self.needs_redraw);
+                    element.r#loop(&mut self.needs_redraw);
                 }
                 last_time_render = timestamp;
             }

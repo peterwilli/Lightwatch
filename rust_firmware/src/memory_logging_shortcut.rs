@@ -1,1 +1,3 @@
-pub fn toggle_in_memory_logging(is_touched, button_)
+use crate::touch_event::*;
+
+pub fn toggle_in_memory_logging(touch_event: TouchEvent)

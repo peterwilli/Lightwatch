@@ -1,6 +1,6 @@
 use crate::c_bindings::*;
 use crate::gui::GuiWidget;
-use crate::touch_event::TouchEvent;
+use crate::input::*;
 use alloc::string::String;
 use cstr_core::CString;
 
@@ -25,7 +25,7 @@ impl GuiWidget for Label {
         };
     }
 
-    fn r#loop(&mut self, _touch_event: &TouchEvent, _needs_redraw: &mut bool) {
+    fn r#loop(&mut self, _needs_redraw: &mut bool) {
         unsafe {
             let c_str =
                 CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");

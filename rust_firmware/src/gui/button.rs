@@ -1,7 +1,7 @@
 use crate::c_bindings::*;
 use crate::gui::event_checks::widget_is_tapped;
 use crate::gui::GuiWidget;
-use crate::touch_event::TouchEvent;
+use crate::input::*;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
 use cstr_core::CString;
@@ -36,13 +36,13 @@ impl GuiWidget for Button {
         };
     }
 
-    fn r#loop(&mut self, touch_event: &TouchEvent, _needs_redraw: &mut bool) {
+    fn r#loop(&mut self, _needs_redraw: &mut bool) {
         unsafe {
             let c_str =
                 CString::new(self.text.as_ref().unwrap().as_bytes()).expect("CString::new failed");
             drawString(c_str.as_ptr(), self.x.into(), self.y.into(), self.font);
 
-            let is_pressed = widget_is_tapped(self.x, self.y, self.w, self.h, touch_event);
+            let is_pressed = widget_is_tapped(self.x, self.y, self.w, self.h);
             if self.on_tap.is_some() {
                 if self.is_pressed != is_pressed {
                     // Means we updated the button state
