@@ -23,6 +23,10 @@ impl SerialLogger {
         }
     }
 
+    pub fn get_debug_in_memory() -> bool {
+        return *DEBUG_IN_MEMORY.lock();
+    }
+
     pub fn set_debug_in_memory(debug_in_memory: bool) {
         let mut debug_in_memory_ = DEBUG_IN_MEMORY.lock();
         if *debug_in_memory_ != debug_in_memory {

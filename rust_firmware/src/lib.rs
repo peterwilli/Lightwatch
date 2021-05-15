@@ -16,7 +16,10 @@ use c_bindings::*;
 mod non_official_c_bindings;
 use non_official_c_bindings::*;
 mod input;
+use input::button_input;
 use input::touch_input;
+
+mod memory_logging_shortcut;
 
 mod gui;
 mod system_applications;
@@ -38,9 +41,11 @@ pub extern "C" fn rust_bb_init() {
     current_app.init();
     loop {
         unsafe {
-            let is_touched = unsafe { getTouch(&mut touch_input.x, &mut touch_input.y) == 1 };
+            let is_touched = getTouch(&mut touch_input.x, &mut touch_input.y) == 1;
             touch_input.is_touched = is_touched;
+            button_input.is_pressed = readIRQ() == 1;
         }
+        memory_logging_shortcut::memory_logging_shortcut_check();
         current_app.r#loop();
     }
 }
