@@ -33,7 +33,7 @@ impl SystemApplication for ActivityApplication {
 
     fn init(&mut self) {
         unsafe {
-            // enableAccelerometer();
+            enableAccelerometer();
             fillScreen(2821);
             setTextColor(400);
 

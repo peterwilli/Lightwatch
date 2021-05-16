@@ -12,6 +12,10 @@ void fillScreen(uint16_t color) {
     ttgo->tft->fillScreen(color);
 }
 
+void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color) {
+  ttgo->tft->fillRect(x, y, w, h, color);
+}
+
 void setTextColor(uint16_t c) {
   ttgo->tft->setTextColor(c);
 }
@@ -28,8 +32,8 @@ void serialPrintln(const char* text) {
   Serial.println(text);
 }
 
-bool readAccelerometer(Accel &accel) {
-  return ttgo->bma->getAccel((Accel&) accel);
+uint8_t readAccelerometer(Accel &accel) {
+  return ttgo->bma->getAccel((Accel&) accel) ? 1 : 0;
 }
 
 void enableAccelerometer() {
@@ -95,9 +99,7 @@ void initLightwatchCDriver() {
   ttgo->begin();
   ttgo->openBL();
   ttgo->tft->setTextFont(1);
-  enableAccelerometer();
 
-  pinMode(AXP202_INT, INPUT_PULLUP);
   pinMode(AXP202_INT, INPUT_PULLUP);
   attachInterrupt(AXP202_INT, [] {
       irq = true;

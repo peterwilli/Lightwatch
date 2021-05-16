@@ -24,7 +24,7 @@ extern "C" {
 #endif
     // System stuff
     void enableAccelerometer();
-    bool readAccelerometer(Accel &accel);
+    uint8_t readAccelerometer(Accel &accel);
     void serialPrintln(const char* text);
     void setBrightness(uint8_t brightness);
     uint8_t readIRQ();
@@ -33,6 +33,7 @@ extern "C" {
     uint8_t getPinAXP202();
         
     // Drawing
+    void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
     void fillScreen(uint16_t color);
     void setTextColor(uint16_t c);    
     int16_t drawString(const char *string, int32_t x, int32_t y, uint8_t font);  // Draw string using specifed font number

@@ -74,7 +74,7 @@ extern "C" {
     pub fn enableAccelerometer();
 }
 extern "C" {
-    pub fn readAccelerometer(accel: *mut Accel) -> i16;
+    pub fn readAccelerometer(accel: *mut Accel) -> u8;
 }
 extern "C" {
     pub fn serialPrintln(text: *const cstr_core::c_char);
@@ -87,6 +87,9 @@ extern "C" {
 }
 extern "C" {
     pub fn getPinAXP202() -> u8;
+}
+extern "C" {
+    pub fn fillRect(x: i32, y: i32, w: i32, h: i32, color: u32);
 }
 extern "C" {
     pub fn fillScreen(color: u16);
