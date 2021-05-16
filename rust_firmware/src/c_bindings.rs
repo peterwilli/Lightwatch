@@ -89,6 +89,9 @@ extern "C" {
     pub fn getPinAXP202() -> u8;
 }
 extern "C" {
+    pub fn setTextSize(size: u8);
+}
+extern "C" {
     pub fn fillRect(x: i32, y: i32, w: i32, h: i32, color: u32);
 }
 extern "C" {

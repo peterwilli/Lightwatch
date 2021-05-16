@@ -33,6 +33,7 @@ extern "C" {
     uint8_t getPinAXP202();
         
     // Drawing
+    void setTextSize(uint8_t size);
     void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);
     void fillScreen(uint16_t color);
     void setTextColor(uint16_t c);    

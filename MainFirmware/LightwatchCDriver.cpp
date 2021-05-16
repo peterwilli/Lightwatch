@@ -20,6 +20,10 @@ void setTextColor(uint16_t c) {
   ttgo->tft->setTextColor(c);
 }
 
+void setTextSize(uint8_t size) {
+  ttgo->tft->setTextSize(size);
+}
+
 int16_t drawString(const char *string, int32_t x, int32_t y, uint8_t font) {
   ttgo->tft->drawString(string, x, y, font);
 }

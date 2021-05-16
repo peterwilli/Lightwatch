@@ -25,6 +25,9 @@ mod gui;
 mod system_applications;
 use system_applications::*;
 
+mod loop_time;
+use loop_time::loop_time;
+
 extern crate alloc;
 
 use alloc::sync::Arc;
@@ -41,6 +44,7 @@ pub extern "C" fn rust_bb_init() {
     current_app.init();
     loop {
         unsafe {
+            loop_time.millis = millis();
             let is_touched = getTouch(&mut touch_input.x, &mut touch_input.y) == 1;
             touch_input.is_touched = is_touched;
             button_input.is_pressed = readIRQ() == 1;

@@ -4,6 +4,7 @@ use crate::gui::GuiWidget;
 use crate::input::*;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
+use core::any::Any;
 use cstr_core::CString;
 
 use alloc::sync::Arc;
@@ -53,5 +54,9 @@ impl GuiWidget for Button {
                 }
             }
         }
+    }
+
+    fn as_any(&mut self) -> &mut dyn Any {
+        self
     }
 }

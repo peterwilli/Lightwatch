@@ -46,14 +46,20 @@ impl GUIRenderer {
         }
         // Redraw if needed
         unsafe {
-            let timestamp = millis();
-            if self.needs_redraw && (timestamp - last_time_render) > redraw_time {
+            if self.will_redraw() {
                 self.needs_redraw = false;
                 for element in &mut self.elements {
                     element.r#loop(&mut self.needs_redraw);
                 }
-                last_time_render = timestamp;
+                last_time_render = millis();
             }
+        }
+    }
+
+    pub fn will_redraw(&mut self) -> bool {
+        unsafe {
+            let timestamp = millis();
+            return self.needs_redraw && (timestamp - last_time_render) > redraw_time;
         }
     }
 }
