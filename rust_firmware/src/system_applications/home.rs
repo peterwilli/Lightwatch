@@ -3,6 +3,7 @@ use crate::c_bindings::*;
 use crate::gui::*;
 use crate::system_applications::system_application::*;
 use crate::system_applications::ActivityApplication;
+use crate::system_applications::LucidDreamingApplication;
 use crate::SerialLogger;
 use alloc::sync::Arc;
 use alloc::vec;
@@ -67,7 +68,7 @@ impl SystemApplication for HomeScreenApplication {
         let mut button = Box::new(Button::new(10, 30, 100, 100));
         button.text = Some("Button".to_string());
         button.on_tap = Some(Box::new(|| {
-            launch_app(Box::new(ActivityApplication::new()));
+            launch_app(Box::new(LucidDreamingApplication::new()));
         }));
         self.gui_renderer.elements.push(label);
         self.gui_renderer.elements.push(button);
