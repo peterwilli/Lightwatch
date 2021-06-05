@@ -32,6 +32,9 @@ extern "C" {
     // Pin numbers (Idk how else to do this)
     uint8_t getPinAXP202();
         
+    // Vibrator
+    void vibrate(uint8_t duration);
+
     // Drawing
     void setTextSize(uint8_t size);
     void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color);

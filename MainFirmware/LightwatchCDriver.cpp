@@ -4,6 +4,10 @@
 TTGOClass *ttgo;
 bool irq = false;
 
+void vibrate(uint8_t duration) {
+  ttgo->motor->onec(duration);
+}
+
 void setBrightness(uint8_t brightness) {
     ttgo->bl->adjust(brightness);
 }

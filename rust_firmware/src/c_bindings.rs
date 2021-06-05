@@ -89,6 +89,9 @@ extern "C" {
     pub fn getPinAXP202() -> u8;
 }
 extern "C" {
+    pub fn vibrate(duration: u8);
+}
+extern "C" {
     pub fn setTextSize(size: u8);
 }
 extern "C" {
