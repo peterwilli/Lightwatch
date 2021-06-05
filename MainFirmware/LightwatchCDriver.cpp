@@ -3,14 +3,41 @@
 
 TTGOClass *ttgo;
 bool irq = false;
-RTC_DATA_ATTR unsigned long RTCUL = 0;
+RTC_DATA_ATTR uint8_t RTC_DATA[1024] = {0};
+#define uS_TO_mS_FACTOR 1000  /* Conversion factor for micro seconds to miliseconds */
 
-unsigned long getRTCUL() {
-  return RTCUL;
+uint8_t getRTCDataAtIndex(uint16_t index) {
+  return RTC_DATA[index];
 }
 
-void setRTCUL(unsigned long RTCUL_) {
-  RTCUL = RTCUL_;
+void setRTCDataAtIndex(uint16_t index, uint8_t data) {
+  RTC_DATA[index] = data;
+}
+
+void deepSleep(uint32_t sleepMillis) {
+  // Set screen and touch to sleep mode
+  ttgo->displaySleep();
+
+  /*
+  When using T - Watch2020V1, you can directly call power->powerOff(),
+  if you use the 2019 version of TWatch, choose to turn off
+  according to the power you need to turn off
+  */
+#ifdef LILYGO_WATCH_2020_V1
+  ttgo->powerOff();
+  // LDO2 is used to power the display, and LDO2 can be turned off if needed
+  // power->setPowerOutPut(AXP202_LDO2, false);
+#else
+  ttgo->power->setPowerOutPut(AXP202_LDO3, false);
+  ttgo->power->setPowerOutPut(AXP202_LDO4, false);
+  ttgo->power->setPowerOutPut(AXP202_LDO2, false);
+  // The following power channels are not used
+  ttgo->power->setPowerOutPut(AXP202_EXTEN, false);
+  ttgo->power->setPowerOutPut(AXP202_DCDC2, false);
+#endif
+
+  esp_sleep_enable_timer_wakeup(sleepMillis * uS_TO_mS_FACTOR);
+  esp_deep_sleep_start();
 }
 
 void enableVibrator() {

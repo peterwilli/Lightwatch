@@ -104,6 +104,15 @@ extern "C" {
     pub fn powerOffEverythingExceptESP32();
 }
 extern "C" {
+    pub fn getRTCDataAtIndex(index: u16) -> u8;
+}
+extern "C" {
+    pub fn setRTCDataAtIndex(index: u16, data: u8);
+}
+extern "C" {
+    pub fn deepSleep(sleepMillis: u32);
+}
+extern "C" {
     pub fn setTextSize(size: u8);
 }
 extern "C" {

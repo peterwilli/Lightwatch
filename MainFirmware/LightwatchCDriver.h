@@ -40,8 +40,9 @@ extern "C" {
     void displaySleep();
     void displayWakeup();
     void powerOffEverythingExceptESP32();
-    unsigned long getRTCUL();
-    void setRTCUL(unsigned long RTCUL_);
+    uint8_t getRTCDataAtIndex(uint16_t index);
+    void setRTCDataAtIndex(uint16_t index, uint8_t data);
+    void deepSleep(uint32_t sleepMillis);
 
     // Drawing
     void setTextSize(uint8_t size);

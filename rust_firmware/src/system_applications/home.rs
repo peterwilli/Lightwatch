@@ -5,7 +5,6 @@ use crate::system_applications::system_application::*;
 
 use crate::system_applications::LucidDreamingApplication;
 
-
 use alloc::vec;
 
 use no_std_compat::sync::Mutex;
@@ -72,6 +71,9 @@ impl SystemApplication for HomeScreenApplication {
         }));
         self.gui_renderer.elements.push(label);
         self.gui_renderer.elements.push(button);
+        if unsafe { getRTCDataAtIndex(0) } > 0 {
+            launch_app(Box::new(LucidDreamingApplication::new()));
+        }
     }
 
     fn r#loop(&mut self) {
