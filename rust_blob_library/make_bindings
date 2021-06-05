@@ -1,1 +1,0 @@
-cbindgen '../rust_firmware/src/lib.rs' > src/lightwatch_rust_blob.h

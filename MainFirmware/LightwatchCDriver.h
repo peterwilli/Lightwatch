@@ -34,6 +34,7 @@ extern "C" {
         
     // Vibrator
     void vibrate(uint8_t duration);
+    void enableVibrator();
 
     // Drawing
     void setTextSize(uint8_t size);

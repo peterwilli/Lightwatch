@@ -4,6 +4,10 @@
 TTGOClass *ttgo;
 bool irq = false;
 
+void enableVibrator() {
+  ttgo->motor_begin();
+}
+
 void vibrate(uint8_t duration) {
   ttgo->motor->onec(duration);
 }

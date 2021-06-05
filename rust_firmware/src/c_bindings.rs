@@ -92,6 +92,9 @@ extern "C" {
     pub fn vibrate(duration: u8);
 }
 extern "C" {
+    pub fn enableVibrator();
+}
+extern "C" {
     pub fn setTextSize(size: u8);
 }
 extern "C" {
