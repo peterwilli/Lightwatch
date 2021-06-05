@@ -36,7 +36,7 @@ void deepSleep(uint32_t sleepMillis) {
   ttgo->power->setPowerOutPut(AXP202_DCDC2, false);
 #endif
 
-  esp_sleep_enable_timer_wakeup(sleepMillis * uS_TO_mS_FACTOR);
+  esp_sleep_enable_timer_wakeup(((uint64_t) sleepMillis) * uS_TO_mS_FACTOR);
   esp_deep_sleep_start();
 }
 
