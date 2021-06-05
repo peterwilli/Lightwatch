@@ -30,8 +30,8 @@ use loop_time::loop_time;
 
 extern crate alloc;
 
-use alloc::sync::Arc;
-use no_std_compat::sync::Mutex;
+
+
 
 #[global_allocator]
 static A: LibcAllocator = LibcAllocator;

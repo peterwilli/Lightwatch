@@ -3,13 +3,13 @@ use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
 use crate::loop_time::loop_time;
-use crate::non_official_c_bindings::*;
+
 use crate::system_applications::system_application::*;
 use crate::SerialLogger;
 use alloc::format;
 use alloc::vec;
-use core::ffi::c_void;
-use cstr_core::CString;
+
+
 use detectors::Detector;
 use detectors::SkippingRopeDetector;
 use std::prelude::v1::*;
@@ -55,7 +55,7 @@ impl SystemApplication for ActivityApplication {
         unsafe {
             if loop_time.millis > self.last_accel_time {
                 let mut accel = Accel { x: 0, y: 0, z: 0 };
-                let x = readAccelerometer(&mut accel);
+                let _x = readAccelerometer(&mut accel);
                 SerialLogger::println(format!("accel: {}x{}x{}", accel.x, accel.y, accel.z));
                 self.current_detector.push_accel(&accel);
                 let mut counter_label: &mut Label = self.gui_renderer.elements[0]

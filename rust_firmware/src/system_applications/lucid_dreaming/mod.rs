@@ -2,13 +2,13 @@ use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
 use crate::loop_time::loop_time;
-use crate::non_official_c_bindings::*;
+
 use crate::system_applications::system_application::*;
-use crate::SerialLogger;
+
 use alloc::format;
 use alloc::vec;
-use core::ffi::c_void;
-use cstr_core::CString;
+
+
 use std::prelude::v1::*;
 
 pub struct LucidDreamingApplication {

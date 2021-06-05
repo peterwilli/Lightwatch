@@ -2,12 +2,12 @@ use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
 use crate::system_applications::system_application::*;
-use crate::system_applications::ActivityApplication;
+
 use crate::system_applications::LucidDreamingApplication;
-use crate::SerialLogger;
-use alloc::sync::Arc;
+
+
 use alloc::vec;
-use cstr_core::CString;
+
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
@@ -28,7 +28,7 @@ lazy_static! {
     });
 }
 
-fn launch_app(app: Box<SystemApplication>) {
+fn launch_app(app: Box<dyn SystemApplication>) {
     let mut home_screen_state = HOME_SCREEN_STATE.lock();
     if home_screen_state.current_application.is_none() {
         home_screen_state.current_application = Some(app);
