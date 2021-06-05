@@ -85,6 +85,11 @@ impl SystemApplication for LucidDreamingApplication {
             if loop_time.millis > self.last_check_time {
                 let seconds_app_up = loop_time.secs() - self.app_start_time;
                 if self.alarm_state == 0 {
+                    if seconds_app_up > 3 && seconds_app_up < 5 {
+                        // Don't spam it but make sure we can't skip it either
+                        displaySleep();
+                        powerOffEverythingExceptESP32();
+                    }
                     let mut counter_label_1: &mut Label = self.gui_renderer.elements[0]
                         .as_any()
                         .downcast_mut::<Label>()

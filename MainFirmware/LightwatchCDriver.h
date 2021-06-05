@@ -35,6 +35,13 @@ extern "C" {
     // Vibrator
     void vibrate(uint8_t duration);
     void enableVibrator();
+    
+    // Power management
+    void displaySleep();
+    void displayWakeup();
+    void powerOffEverythingExceptESP32();
+    unsigned long getRTCUL();
+    void setRTCUL(unsigned long RTCUL_);
 
     // Drawing
     void setTextSize(uint8_t size);

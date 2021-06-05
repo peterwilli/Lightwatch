@@ -3,9 +3,34 @@
 
 TTGOClass *ttgo;
 bool irq = false;
+RTC_DATA_ATTR unsigned long RTCUL = 0;
+
+unsigned long getRTCUL() {
+  return RTCUL;
+}
+
+void setRTCUL(unsigned long RTCUL_) {
+  RTCUL = RTCUL_;
+}
 
 void enableVibrator() {
   ttgo->motor_begin();
+}
+
+void powerOffEverythingExceptESP32() {
+  ttgo->powerOff();
+}
+
+void displayOff() {
+  ttgo->displayOff();
+}    
+
+void displaySleep() {
+  ttgo->displaySleep();
+}
+
+void displayWakeup() {
+  ttgo->displayWakeup();
 }
 
 void vibrate(uint8_t duration) {

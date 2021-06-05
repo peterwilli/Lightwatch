@@ -95,6 +95,15 @@ extern "C" {
     pub fn enableVibrator();
 }
 extern "C" {
+    pub fn displaySleep();
+}
+extern "C" {
+    pub fn displayWakeup();
+}
+extern "C" {
+    pub fn powerOffEverythingExceptESP32();
+}
+extern "C" {
     pub fn setTextSize(size: u8);
 }
 extern "C" {
