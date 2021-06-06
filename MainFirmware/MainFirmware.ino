@@ -7,7 +7,7 @@ void screenTest() {
     delay(1000);
     Serial.println("G");
     ttgo->tft->fillScreen(TFT_GREEN);
-    delay(1000);
+    delay ;(1000);
     Serial.println("B");
     ttgo->tft->fillScreen(TFT_BLUE);
     delay(1000);

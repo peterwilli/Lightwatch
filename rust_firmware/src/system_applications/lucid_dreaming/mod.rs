@@ -28,7 +28,15 @@ enum LDVibrationBreaker {
 
 impl LucidDreamingApplication {
     fn vibrate_while(&self, pattern: &[u16], breaker: LDVibrationBreaker) {
+        let vibrate_start_time = unsafe { millis() };
         let check = || -> bool {
+            if unsafe { millis() } - vibrate_start_time < (25 * 1000) {
+                unsafe {
+                    // To ignore any defered button presses
+                    readIRQ();
+                }
+                return false;
+            }
             if matches!(breaker, LDVibrationBreaker::Button) {
                 return unsafe { readIRQ() == 1 };
             } else if matches!(breaker, LDVibrationBreaker::Shake) {
