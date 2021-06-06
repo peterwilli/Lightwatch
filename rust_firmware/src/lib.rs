@@ -9,8 +9,8 @@ use panic_halt as _;
 use std::prelude::v1::*;
 mod libc_alloc;
 use libc_alloc::*;
-mod serial_logger;
-use serial_logger::SerialLogger;
+mod utils;
+use utils::SerialLogger;
 mod c_bindings;
 use c_bindings::*;
 mod non_official_c_bindings;
@@ -19,19 +19,14 @@ mod input;
 use input::button_input;
 use input::touch_input;
 
-mod memory_logging_shortcut;
-
 mod gui;
 mod system_applications;
 use system_applications::*;
 
-mod loop_time;
-use loop_time::loop_time;
+use utils::loop_time;
+use utils::memory_logging_shortcut;
 
 extern crate alloc;
-
-
-
 
 #[global_allocator]
 static A: LibcAllocator = LibcAllocator;

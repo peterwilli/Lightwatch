@@ -2,14 +2,11 @@ mod detectors;
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
-use crate::loop_time::loop_time;
-
 use crate::system_applications::system_application::*;
+use crate::utils::loop_time;
 use crate::SerialLogger;
 use alloc::format;
 use alloc::vec;
-
-
 use detectors::Detector;
 use detectors::SkippingRopeDetector;
 use std::prelude::v1::*;

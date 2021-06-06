@@ -1,9 +1,9 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
-use crate::loop_time::loop_time;
 use crate::non_official_c_bindings::*;
 use crate::system_applications::system_application::*;
+use crate::utils::loop_time;
 use crate::SerialLogger;
 use alloc::format;
 use alloc::vec;
@@ -77,6 +77,7 @@ impl SystemApplication for LucidDreamingApplication {
                 deepSleep(self.rausis_2 * 1000);
             } else if self.alarm_state == 2 {
                 enableVibrator();
+                enableAccelerometer();
                 self.vibrate(&vec![500, 1000, 500, 1000, 500, 1000, 500, 1000]);
                 deepSleep(60 * 60 * 24 * 1000);
             }

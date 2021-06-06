@@ -1,6 +1,6 @@
 use crate::c_bindings::*;
 use crate::input::*;
-use crate::serial_logger::SerialLogger;
+use crate::utils::SerialLogger;
 use cstr_core::CString;
 
 static mut LAST_TRIGGER: bool = false;
