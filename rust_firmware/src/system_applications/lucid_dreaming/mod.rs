@@ -27,10 +27,10 @@ enum LDVibrationBreaker {
 }
 
 impl LucidDreamingApplication {
-    fn vibrate_while(&self, pattern: &[u16], breaker: LDVibrationBreaker) {
+    fn vibrate_while(&self, pattern: &[u16], min_wait_ms: u32, breaker: LDVibrationBreaker) {
         let vibrate_start_time = unsafe { millis() };
         let check = || -> bool {
-            if unsafe { millis() } - vibrate_start_time < (25 * 1000) {
+            if unsafe { millis() } - vibrate_start_time < (min_wait_ms) {
                 unsafe {
                     // To ignore any defered button presses
                     readIRQ();
@@ -91,7 +91,7 @@ impl SystemApplication for LucidDreamingApplication {
                 last_check_time: 0,
                 app_start_time: 0,
                 rausis_1: 18000,
-                rausis_2: 720,
+                rausis_2: 0,
                 alarm_state: unsafe { getRTCDataAtIndex(0) },
             }
         };
@@ -117,17 +117,33 @@ impl SystemApplication for LucidDreamingApplication {
                 enableVibrator();
                 self.vibrate_while(
                     &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
+                    25 * 1000,
                     LDVibrationBreaker::Button,
                 );
+                'outer: loop {
+                    self.vibrate_while(&vec![100, 1000], 0, LDVibrationBreaker::Button);
+                    let vibrate_end_time = unsafe { millis() };
+                    loop {
+                        let now_time = unsafe { millis() };
+                        if now_time - vibrate_end_time < 1000 {
+                            if readIRQ() == 1 {
+                                break 'outer;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                    // Add one minute
+                    self.rausis_2 += 60;
+                    SerialLogger::println("added one minute to second alarm".to_string());
+                }
+                SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
                 setRTCDataAtIndex(0, 2);
                 deepSleep(self.rausis_2 * 1000);
             } else if self.alarm_state == 2 {
                 enableVibrator();
                 enableAccelerometer();
-                self.vibrate_while(
-                    &vec![500, 1000, 500, 1000, 500, 1000, 500, 1000],
-                    LDVibrationBreaker::Shake,
-                );
+                self.vibrate_while(&vec![500, 1000], 25 * 1000, LDVibrationBreaker::Shake);
                 deepSleep(60 * 60 * 24 * 1000);
             }
         }
