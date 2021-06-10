@@ -22,6 +22,7 @@ pub struct LucidDreamingApplication {
     rausis_1: u32,
     rausis_2: u32,
     alarm_state: u8,
+    data_updated: Arc<Mutex<bool>>,
 }
 
 enum LDVibrationBreaker {
@@ -30,6 +31,16 @@ enum LDVibrationBreaker {
 }
 
 impl LucidDreamingApplication {
+    fn update_rausis1(
+        rausis_selected_hours_lock: &Arc<Mutex<u8>>,
+        data_updated_lock: &Arc<Mutex<bool>>,
+        new_hours: u8,
+    ) {
+        SerialLogger::println(format!("new_hours: {}", new_hours));
+        *rausis_selected_hours_lock.lock() = new_hours;
+        *data_updated_lock.lock() = true;
+    }
+
     fn vibrate_while(&self, pattern: &[u16], min_wait_ms: u32, breaker: LDVibrationBreaker) {
         let vibrate_start_time = unsafe { millis() };
         let check = || -> bool {
@@ -97,6 +108,7 @@ impl SystemApplication for LucidDreamingApplication {
                 rausis_2: 0,
                 rausis_selected_hours: Arc::new(Mutex::new(0)),
                 alarm_state: unsafe { getRTCDataAtIndex(0) },
+                data_updated: Arc::new(Mutex::new(false)),
             }
         };
     }
@@ -112,83 +124,137 @@ impl SystemApplication for LucidDreamingApplication {
 
     fn init(&mut self) {
         unsafe {
-            self.app_start_time = loop_time.secs();
+            setBrightness(50);
+        }
+        self.app_start_time = unsafe { loop_time.secs() };
+        unsafe {
             fillScreen(0);
-            if self.alarm_state == 0 {
-                let mut x: u16 = 0;
-                let mut y: u16 = 0;
-                unsafe {
-                    getScreenSize(&mut x, &mut y);
+            setTextColor(400);
+        }
+        if self.alarm_state == 0 {
+            let mut x: u16 = 0;
+            let mut y: u16 = 0;
+            unsafe {
+                getScreenSize(&mut x, &mut y);
+            }
+            let mut label = Box::new(Label::new(50, 50, 70, 20));
+            label.font_size = 1;
+            label.text = Some("Hours".to_string());
+            self.gui_renderer.elements.push(label);
+
+            // Buttons
+            let mut button = Box::new(Button::new(50, 10, 40, 40));
+            button.text = Some("Up".to_string());
+            let rausis_selected_hours_lock = self.rausis_selected_hours.clone();
+            let data_updated_lock = self.data_updated.clone();
+            button.on_tap = Some(Box::new(move || {
+                let new_hours = *rausis_selected_hours_lock.lock() + 1;
+                LucidDreamingApplication::update_rausis1(
+                    &rausis_selected_hours_lock,
+                    &data_updated_lock,
+                    new_hours,
+                )
+            }));
+            self.gui_renderer.elements.push(button);
+
+            let mut button = Box::new(Button::new(50, 80, 40, 40));
+            button.text = Some("Down".to_string());
+            let rausis_selected_hours_lock = self.rausis_selected_hours.clone();
+            let data_updated_lock = self.data_updated.clone();
+            button.on_tap = Some(Box::new(move || {
+                if *rausis_selected_hours_lock.lock() > 0 {
+                    let new_hours = *rausis_selected_hours_lock.lock() - 1;
+                    LucidDreamingApplication::update_rausis1(
+                        &rausis_selected_hours_lock,
+                        &data_updated_lock,
+                        new_hours,
+                    )
                 }
-                let mut label = Box::new(Label::new(50, 50, 70, 20));
-                label.font_size = 1;
-                label.text = Some("Hours".to_string());
-                self.gui_renderer.elements.push(label);
+            }));
+            self.gui_renderer.elements.push(button);
 
-                // Buttons
-                let mut button = Box::new(Button::new(50, 10, 40, 40));
-                button.text = Some("Up".to_string());
-                let rausis_selected_hours_lock = Box::new(self.rausis_selected_hours.clone());
-                button.on_tap = Some(Box::new(|| {
-                    SerialLogger::println(format!("hours: {}", *rausis_selected_hours_lock.lock()));
-                }));
-                self.gui_renderer.elements.push(button);
-
-                let mut button = Box::new(Button::new(50, 80, 40, 40));
-                button.text = Some("Down".to_string());
-                button.on_tap = Some(Box::new(|| {}));
-                self.gui_renderer.elements.push(button);
-            } else if self.alarm_state == 1 {
-                let before_loop_time = unsafe { millis() };
+            let mut button = Box::new(Button::new(100, 80, 40, 40));
+            button.text = Some("Start".to_string());
+            let rausis_selected_hours_lock = self.rausis_selected_hours.clone();
+            button.on_tap = Some(Box::new(move || {
+                let deep_sleep_secs = *rausis_selected_hours_lock.lock() as u32 * 60 * 60;
+                if deep_sleep_secs > 0 {
+                    SerialLogger::println(format!("deep sleep for {} seconds", deep_sleep_secs));
+                    unsafe {
+                        setRTCDataAtIndex(0, 1);
+                        deepSleep(deep_sleep_secs * 1000);
+                    }
+                }
+            }));
+            self.gui_renderer.elements.push(button);
+        } else if self.alarm_state == 1 {
+            unsafe {
+                enableVibrator();
+            }
+            self.vibrate_while(
+                &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
+                1 * 1000,
+                LDVibrationBreaker::Button,
+            );
+            'outer: loop {
+                self.vibrate_while(&vec![100, 1000], 0, LDVibrationBreaker::Button);
+                let vibrate_end_time = unsafe { millis() };
                 loop {
                     let now_time = unsafe { millis() };
-                    if now_time - before_loop_time < 1000 {
-                        if readIRQ() == 1 {
-                            // Reset to second alarm
-                            setRTCDataAtIndex(0, 2);
-                            deepSleep(1000);
+                    if now_time - vibrate_end_time < 1000 {
+                        if unsafe { readIRQ() } == 1 {
+                            break 'outer;
                         }
                     } else {
                         break;
                     }
                 }
+                // Add one minute
+                self.rausis_2 += 60;
+                SerialLogger::println("added one minute to second alarm".to_string());
+            }
+            SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
+            unsafe {
                 setRTCDataAtIndex(0, 2);
-                deepSleep(self.rausis_1 * 1000);
-            } else if self.alarm_state == 2 {
-                enableVibrator();
-                self.vibrate_while(
-                    &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
-                    1 * 1000,
-                    LDVibrationBreaker::Button,
-                );
-                'outer: loop {
-                    self.vibrate_while(&vec![100, 1000], 0, LDVibrationBreaker::Button);
-                    let vibrate_end_time = unsafe { millis() };
-                    loop {
-                        let now_time = unsafe { millis() };
-                        if now_time - vibrate_end_time < 1000 {
-                            if readIRQ() == 1 {
-                                break 'outer;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    // Add one minute
-                    self.rausis_2 += 60;
-                    SerialLogger::println("added one minute to second alarm".to_string());
-                }
-                SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
-                setRTCDataAtIndex(0, 3);
                 deepSleep(self.rausis_2 * 1000);
-            } else if self.alarm_state == 3 {
+            }
+        } else if self.alarm_state == 2 {
+            unsafe {
                 enableVibrator();
                 enableAccelerometer();
-                self.vibrate_while(&vec![500, 1000], 1 * 1000, LDVibrationBreaker::Shake);
+            }
+            self.vibrate_while(&vec![500, 1000], 1 * 1000, LDVibrationBreaker::Shake);
+            unsafe {
                 deepSleep(60 * 60 * 24 * 1000);
             }
         }
     }
 
-    fn r#loop(&mut self) {}
+    fn r#loop(&mut self) {
+        if self.alarm_state == 0 && unsafe { readIRQ() == 1 } {
+            unsafe {
+                // Immediately go to the first alarm so you can set the second
+                setRTCDataAtIndex(0, 1);
+                deepSleep(1000);
+            }
+        }
+        if self.gui_renderer.will_redraw() {
+            unsafe {
+                fillScreen(0);
+            }
+        }
+        self.gui_renderer.r#loop();
+        if *self.data_updated.lock() {
+            *self.data_updated.lock() = false;
+            let mut counter_label: &mut Label = self.gui_renderer.elements[0]
+                .as_any()
+                .downcast_mut::<Label>()
+                .expect("Wasn't a label!");
+            let old_text = counter_label.text.clone();
+            counter_label.text = Some(format!("{} hours", *self.rausis_selected_hours.lock()));
+            if old_text.as_deref() != counter_label.text.as_deref() {
+                self.gui_renderer.needs_redraw = true;
+            }
+        }
+    }
 }

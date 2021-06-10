@@ -1,4 +1,3 @@
-// mod activity;
 mod activity;
 mod home;
 mod lucid_dreaming;
