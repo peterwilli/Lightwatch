@@ -41,11 +41,11 @@ impl SystemApplication for ActivityApplication {
         unsafe {
             enableAccelerometer();
             fillScreen(2821);
-            let mut label = Box::new(Label::new(10, 10, 100, 100));
-            label.font_size = 2;
-            label.text = Some("Jump count".to_string());
-            self.gui_renderer.elements.push(label);
         }
+        let mut label = Box::new(Label::new(10, 10, 100, 100));
+        label.font_size = 2;
+        label.text = Some("Jump count".to_string());
+        self.gui_renderer.elements.push(label);
     }
 
     fn r#loop(&mut self) {

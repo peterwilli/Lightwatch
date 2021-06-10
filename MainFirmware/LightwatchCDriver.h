@@ -27,6 +27,7 @@ extern "C" {
     uint8_t readAccelerometer(Accel &accel);
     void serialPrintln(const char* text);
     void setBrightness(uint8_t brightness);
+    void getScreenSize(uint16_t &w, uint16_t &h);
     uint8_t readIRQ();
 
     // Pin numbers (Idk how else to do this)

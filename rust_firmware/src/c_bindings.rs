@@ -83,6 +83,9 @@ extern "C" {
     pub fn setBrightness(brightness: u8);
 }
 extern "C" {
+    pub fn getScreenSize(w: *mut u16, h: *mut u16);
+}
+extern "C" {
     pub fn readIRQ() -> u8;
 }
 extern "C" {

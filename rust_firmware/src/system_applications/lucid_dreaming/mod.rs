@@ -7,15 +7,18 @@ use crate::system_applications::system_application::*;
 use crate::utils::loop_time;
 use crate::SerialLogger;
 use alloc::format;
+use alloc::sync::Arc;
 use alloc::vec;
 use core::ffi::c_void;
 use cstr_core::CString;
+use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
     app_start_time: u32,
     last_check_time: u32,
+    rausis_selected_hours: Arc<Mutex<u8>>,
     rausis_1: u32,
     rausis_2: u32,
     alarm_state: u8,
@@ -47,7 +50,7 @@ impl LucidDreamingApplication {
                     "accel: {}x{}x{} [{}]",
                     accel.x, accel.y, accel.z, accel_avg
                 ));
-                return accel_avg > 200;
+                return accel_avg > 150;
             }
             return false;
         };
@@ -92,6 +95,7 @@ impl SystemApplication for LucidDreamingApplication {
                 app_start_time: 0,
                 rausis_1: 18000,
                 rausis_2: 0,
+                rausis_selected_hours: Arc::new(Mutex::new(0)),
                 alarm_state: unsafe { getRTCDataAtIndex(0) },
             }
         };
@@ -111,13 +115,50 @@ impl SystemApplication for LucidDreamingApplication {
             self.app_start_time = loop_time.secs();
             fillScreen(0);
             if self.alarm_state == 0 {
-                setRTCDataAtIndex(0, 1);
-                deepSleep(self.rausis_1 * 1000);
+                let mut x: u16 = 0;
+                let mut y: u16 = 0;
+                unsafe {
+                    getScreenSize(&mut x, &mut y);
+                }
+                let mut label = Box::new(Label::new(50, 50, 70, 20));
+                label.font_size = 1;
+                label.text = Some("Hours".to_string());
+                self.gui_renderer.elements.push(label);
+
+                // Buttons
+                let mut button = Box::new(Button::new(50, 10, 40, 40));
+                button.text = Some("Up".to_string());
+                let rausis_selected_hours_lock = Box::new(self.rausis_selected_hours.clone());
+                button.on_tap = Some(Box::new(|| {
+                    SerialLogger::println(format!("hours: {}", *rausis_selected_hours_lock.lock()));
+                }));
+                self.gui_renderer.elements.push(button);
+
+                let mut button = Box::new(Button::new(50, 80, 40, 40));
+                button.text = Some("Down".to_string());
+                button.on_tap = Some(Box::new(|| {}));
+                self.gui_renderer.elements.push(button);
             } else if self.alarm_state == 1 {
+                let before_loop_time = unsafe { millis() };
+                loop {
+                    let now_time = unsafe { millis() };
+                    if now_time - before_loop_time < 1000 {
+                        if readIRQ() == 1 {
+                            // Reset to second alarm
+                            setRTCDataAtIndex(0, 2);
+                            deepSleep(1000);
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                setRTCDataAtIndex(0, 2);
+                deepSleep(self.rausis_1 * 1000);
+            } else if self.alarm_state == 2 {
                 enableVibrator();
                 self.vibrate_while(
                     &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
-                    25 * 1000,
+                    1 * 1000,
                     LDVibrationBreaker::Button,
                 );
                 'outer: loop {
@@ -138,12 +179,12 @@ impl SystemApplication for LucidDreamingApplication {
                     SerialLogger::println("added one minute to second alarm".to_string());
                 }
                 SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
-                setRTCDataAtIndex(0, 2);
+                setRTCDataAtIndex(0, 3);
                 deepSleep(self.rausis_2 * 1000);
-            } else if self.alarm_state == 2 {
+            } else if self.alarm_state == 3 {
                 enableVibrator();
                 enableAccelerometer();
-                self.vibrate_while(&vec![500, 1000], 25 * 1000, LDVibrationBreaker::Shake);
+                self.vibrate_while(&vec![500, 1000], 1 * 1000, LDVibrationBreaker::Shake);
                 deepSleep(60 * 60 * 24 * 1000);
             }
         }

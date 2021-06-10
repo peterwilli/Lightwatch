@@ -150,6 +150,11 @@ void enableAccelerometer() {
   ttgo->bma->enableAccel();
 }
 
+void getScreenSize(uint16_t &w, uint16_t &h) {
+  w = TFT_WIDTH;
+  h = TFT_HEIGHT;
+}
+
 uint8_t getTouch(int16_t &x, int16_t &y) {
   return ttgo->getTouch(x, y) ? 1 : 0;
 }
