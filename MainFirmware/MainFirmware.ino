@@ -1,4 +1,3 @@
-
 #include <lightwatch_rust_blob.h>
 #include "LightwatchCDriver.h"
 
