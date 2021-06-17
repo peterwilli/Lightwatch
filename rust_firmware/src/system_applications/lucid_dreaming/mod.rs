@@ -29,6 +29,7 @@ pub struct LucidDreamingApplication {
 enum LDVibrationBreaker {
     Shake,
     Button,
+    AutoDismiss,
 }
 
 impl LucidDreamingApplication {
@@ -73,6 +74,8 @@ impl LucidDreamingApplication {
                     accel.x, accel.y, accel.z, accel_avg
                 ));
                 return accel_avg > 50;
+            } else if matches!(breaker, LDVibrationBreaker::AutoDismiss) {
+                return true;
             }
             return false;
         };
@@ -249,7 +252,7 @@ impl SystemApplication for LucidDreamingApplication {
             }
             self.vibrate_while(
                 &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
-                1 * 1000,
+                25 * 1000,
                 LDVibrationBreaker::Button,
             );
             let preset_mins = unsafe { getRTCDataAtIndex(1) };
@@ -284,7 +287,7 @@ impl SystemApplication for LucidDreamingApplication {
                 enableVibrator();
                 enableAccelerometer();
             }
-            self.vibrate_while(&vec![500, 1000], 1 * 1000, LDVibrationBreaker::Shake);
+            self.vibrate_while(&vec![500, 1000], 25 * 1000, LDVibrationBreaker::AutoDismiss);
             unsafe {
                 deepSleep(60 * 60 * 24 * 1000);
             }
