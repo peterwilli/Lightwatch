@@ -20,7 +20,6 @@ pub struct LucidDreamingApplication {
     last_check_time: u32,
     rausis_selected_hours: Arc<Mutex<u8>>,
     rausis2_selected_minutes: Arc<Mutex<u8>>,
-    rausis_1: u32,
     rausis_2: u32,
     alarm_state: u8,
     data_updated: Arc<Mutex<bool>>,
@@ -29,6 +28,7 @@ pub struct LucidDreamingApplication {
 enum LDVibrationBreaker {
     Shake,
     Button,
+    ButtonCount,
     AutoDismiss,
 }
 
@@ -53,9 +53,24 @@ impl LucidDreamingApplication {
         *data_updated_lock.lock() = true;
     }
 
+    fn random_vibration_pattern() -> Vec<u16> {
+        // Silence not included
+        let pattern_length = unsafe { esp_random() } % 5;
+        let mut result: Vec<u16> = Vec::new();
+        for i in 0..pattern_length {
+            let vibration_start = 200 + ((unsafe { esp_random() } % 700) as u16);
+            let vibration_end = 200 + ((unsafe { esp_random() } % 700) as u16);
+            result.push(vibration_start);
+            result.push(vibration_end);
+        }
+        return result;
+    }
+
     fn vibrate_while(&self, pattern: &[u16], min_wait_ms: u32, breaker: LDVibrationBreaker) {
         let vibrate_start_time = unsafe { millis() };
-        let check = || -> bool {
+        let mut last_vibrate_time = vibrate_start_time;
+        let button_count = Mutex::new(0 as u8);
+        let check = |last_vibrate_time: u32| -> bool {
             if unsafe { millis() } - vibrate_start_time < (min_wait_ms) {
                 unsafe {
                     // To ignore any defered button presses
@@ -76,21 +91,42 @@ impl LucidDreamingApplication {
                 return accel_avg > 50;
             } else if matches!(breaker, LDVibrationBreaker::AutoDismiss) {
                 return true;
+            } else if matches!(breaker, LDVibrationBreaker::ButtonCount) {
+                if unsafe { readIRQ() == 1 } {
+                    let button_press_time = unsafe { millis() };
+                    let button_vibration_diff = button_press_time - last_vibrate_time;
+                    SerialLogger::println(format!(
+                        "button_press_time: {} last_vibrate_time: {} diff: {}",
+                        button_press_time, last_vibrate_time, button_vibration_diff
+                    ));
+                    if button_vibration_diff <= 200 {
+                        let orig = *button_count.lock();
+                        *button_count.lock() = orig + 1;
+
+                        if *button_count.lock() >= 10 {
+                            return true;
+                        }
+                    } else {
+                        // Reset the score
+                        // *button_count.lock() = 0;
+                    }
+                }
             }
             return false;
         };
         loop {
-            if check() {
+            if check(last_vibrate_time) {
                 break;
             }
             for (i, pattern_piece) in pattern.iter().enumerate() {
                 if i % 2 == 0 {
                     let pattern_piece_calculated = (pattern_piece / 100);
                     for i2 in 0..pattern_piece_calculated {
+                        last_vibrate_time = unsafe { millis() };
                         unsafe {
                             vibrate(100);
                             delay(100);
-                            if check() {
+                            if check(last_vibrate_time) {
                                 return;
                             }
                         }
@@ -100,7 +136,7 @@ impl LucidDreamingApplication {
                     for i2 in 0..pattern_piece_calculated {
                         unsafe {
                             delay(100);
-                            if check() {
+                            if check(last_vibrate_time) {
                                 return;
                             }
                         }
@@ -192,7 +228,6 @@ impl SystemApplication for LucidDreamingApplication {
                 gui_renderer: GUIRenderer::new(),
                 last_check_time: 0,
                 app_start_time: 0,
-                rausis_1: 18000,
                 rausis_2: 0,
                 rausis_selected_hours: Arc::new(Mutex::new(0)),
                 rausis2_selected_minutes: Arc::new(Mutex::new(0)),
@@ -235,7 +270,7 @@ impl SystemApplication for LucidDreamingApplication {
             let rausis2_selected_minutes_lock = self.rausis2_selected_minutes.clone();
             button.on_tap = Some(Box::new(move || {
                 let deep_sleep_secs = *rausis_selected_hours_lock.lock() as u32 * 60 * 60;
-                // let deep_sleep_secs = 10;
+                // let deep_sleep_secs = 1;
                 if deep_sleep_secs > 0 {
                     SerialLogger::println(format!("deep sleep for {} seconds", deep_sleep_secs));
                     unsafe {
@@ -250,10 +285,11 @@ impl SystemApplication for LucidDreamingApplication {
             unsafe {
                 enableVibrator();
             }
+            let random_vibration_pattern = Self::random_vibration_pattern();
             self.vibrate_while(
-                &vec![1000, 100, 1000, 100, 1000, 100, 1000, 100],
-                25 * 1000,
-                LDVibrationBreaker::Button,
+                &random_vibration_pattern,
+                0,
+                LDVibrationBreaker::ButtonCount,
             );
             let preset_mins = unsafe { getRTCDataAtIndex(1) };
             if preset_mins == 0 {
@@ -287,7 +323,7 @@ impl SystemApplication for LucidDreamingApplication {
                 enableVibrator();
                 enableAccelerometer();
             }
-            self.vibrate_while(&vec![500, 1000], 25 * 1000, LDVibrationBreaker::AutoDismiss);
+            self.vibrate_while(&vec![500, 1000], 60 * 1000, LDVibrationBreaker::AutoDismiss);
             unsafe {
                 deepSleep(60 * 60 * 24 * 1000);
             }
