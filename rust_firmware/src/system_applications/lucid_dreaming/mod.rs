@@ -323,7 +323,8 @@ impl SystemApplication for LucidDreamingApplication {
                 enableVibrator();
                 enableAccelerometer();
             }
-            self.vibrate_while(&vec![500, 1000], 60 * 1000, LDVibrationBreaker::AutoDismiss);
+            self.vibrate_while(&vec![500, 1000], 25 * 1000, LDVibrationBreaker::AutoDismiss);
+            self.vibrate_while(&vec![100, 500], 0, LDVibrationBreaker::Shake);
             unsafe {
                 deepSleep(60 * 60 * 24 * 1000);
             }
@@ -331,11 +332,12 @@ impl SystemApplication for LucidDreamingApplication {
     }
 
     fn r#loop(&mut self) {
-        if self.alarm_state == 0 && unsafe { readIRQ() == 1 } {
+        if self.alarm_state == 0 && unsafe { button_input.is_pressed } {
             unsafe {
                 // Immediately go to the first alarm so you can set the second
                 setRTCDataAtIndex(0, 1);
                 deepSleep(1000);
+                return;
             }
         }
         if self.gui_renderer.will_redraw() {
