@@ -20,7 +20,20 @@ module cut_base_round_cube() {
     }
 }
 
-difference() {
-    cut_base_round_cube();
-    translate([0, 0, 1]) cut_base_round_cube();
+module clip(width = 2, height = 3, thickness = 0.5, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
+    translate([0, thickness, height - topHeight]) cube([width, topThickness, topHeight]);
+    cube([width, thickness, height]);
+    cube([width, bottomThickness, bottomHeight]);
 }
+
+module backplate() {
+    difference() {
+        cut_base_round_cube();
+        translate([0, 0, 1]) cut_base_round_cube();
+    }
+
+    // TODO: placement
+    clip();
+}
+
+backplate();
