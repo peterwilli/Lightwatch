@@ -20,20 +20,31 @@ module cut_base_round_cube() {
     }
 }
 
-module clip(width = 2, height = 3, thickness = 0.5, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
-    translate([0, thickness, height - topHeight]) cube([width, topThickness, topHeight]);
-    cube([width, thickness, height]);
-    cube([width, bottomThickness, bottomHeight]);
-}
-
-module backplate() {
+module roundCubePlate() {
     difference() {
         cut_base_round_cube();
         translate([0, 0, 1]) cut_base_round_cube();
     }
+}
+
+module clip(width = 2, height = 3, thickness = 0.5, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
+    difference() {
+        union() {
+            translate([0, thickness, height - topHeight]) cube([width, topThickness, topHeight]);
+            cube([width, thickness, height]);
+            cube([width, bottomThickness, bottomHeight]);
+        }
+        translate([-10, -45, -2.2]) roundCubePlate();
+    }
+}
+
+clip();
+
+module backplate() {
+    roundCubePlate();
 
     // TODO: placement
-    clip();
+    translate([10, 1.5, 2.70]) mirror([0, 1, 0]) clip();
 }
 
 backplate();
