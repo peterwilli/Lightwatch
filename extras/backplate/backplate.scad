@@ -35,7 +35,7 @@ module roundCubePlate() {
     }
 }
 
-module clip(width = 2, height = 1.82, thickness = 0.80, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
+module clip(width = 2, height = 1.82, thickness = 0.75, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
     color([0.6, 0.1, 0.5]) render() {
         difference() {
             union() {
@@ -43,11 +43,10 @@ module clip(width = 2, height = 1.82, thickness = 0.80, topThickness = 0.2, topH
                 cube([width, thickness, height]);
                 cube([width, bottomThickness, bottomHeight]);
             }
-            translate([-10, (backplate_height * -1) + backplate_borderThickness + 1, (backplate_depth * -1) + bottomHeight]) roundCubePlate();
+            translate([-10, (backplate_height * -1) + 1.32, (backplate_depth * -1) + bottomHeight - 0.5]) roundCubePlate();
         }
     }
 }
-
 module backplate() {
     roundCubePlate();
 
