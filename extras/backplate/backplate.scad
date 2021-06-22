@@ -47,11 +47,18 @@ module clip(width = 2, height = 1.82, thickness = 0.75, topThickness = 0.2, topH
         }
     }
 }
+
 module backplate() {
     roundCubePlate();
 
     clipWidth = 3.55;
-    translate([backplate_width - backplate_borderThickness - 1, 7.69 + clipWidth, 2.70]) rotate([0, 0, -90]) clip(width = clipWidth);
+    // Right side
+    translate([backplate_width - backplate_borderThickness - 1, 7.90 + clipWidth, 2.70]) rotate([0, 0, -90]) clip(width = clipWidth);
+    translate([backplate_width - backplate_borderThickness - 1, backplate_height - 8.90, 2.70]) rotate([0, 0, -90]) clip(width = clipWidth);
+
+    // Left side
+    translate([backplate_borderThickness + 1, 8.93, 2.70]) rotate([0, 0, 90]) clip(width = clipWidth);
+    translate([backplate_borderThickness + 1, backplate_height - 8.99 - clipWidth, 2.70]) rotate([0, 0, 90]) clip(width = clipWidth);
 }
 
 backplate();
