@@ -1,9 +1,9 @@
 backplate_width = 38.65;
 backplate_height = 46.40;
-backplate_depth = 3.70;
+backplate_depth = 3.80;
 backplate_radius = 7;
-backplate_borderThickness = 0.3;
-backplate_borderThicknessBottom = backplate_depth - 2.59;
+backplate_borderThickness = 0.5;
+backplate_borderThicknessBottom = 1;
 
 module base_round_cube() {
     zScale = 0.8;
@@ -39,7 +39,12 @@ module halfPlate() {
     }
 }
 
-// !halfPlate();
+module clipIntersector() {
+    union() {
+        halfPlate();
+        translate([0, 0, backplate_depth]) cube([backplate_width, backplate_height, 10]);
+    }
+}
 
 module roundCubePlate() {
     translate([(backplate_width / 2), (backplate_height / 2), 0]) resize([backplate_width, backplate_height, backplate_depth]) translate([-(backplate_width / 2), -(backplate_height / 2), 0]) difference() {
@@ -58,15 +63,15 @@ module roundCubePlate() {
     }
 }
 
-module clip(width = 2, height = 1.82, thickness = 0.75, topThickness = 0.2, topHeight = 0.4, bottomHeight = 1, bottomThickness = 1) {
+module clip(width = 2, height = 1.82, thickness = 0.95, topThickness = 0.2, topHeight = 0.4, bottomHeight = backplate_depth, bottomThickness = 2) {
     color([0.6, 0.1, 0.5]) {
-        difference() {
-            union() {
-                translate([0, thickness, height - topHeight]) cube([width, topThickness, topHeight]);
+        intersection() {
+            translate([0, 0, bottomHeight]) union() {
+                translate([0, thickness, height - (topThickness * 0.5)]) scale([1, 1, 0.5]) rotate([90, 0, 90]) cylinder(r=topThickness, h=width, center=false, $fn=50);
                 cube([width, thickness, height]);
-                cube([width, bottomThickness, bottomHeight]);
+                translate([0, 0, bottomHeight * -1]) cube([width, bottomThickness, bottomHeight]);
             }
-            translate([-10, (backplate_height * -1) + 1.65, (backplate_depth * -1) + bottomHeight]) roundCubePlate();
+            translate([-10, (backplate_height * -1) + bottomThickness, 0]) clipIntersector();
         }
     }
 }
@@ -84,18 +89,20 @@ module backplate() {
     difference() {
         union() {
             roundCubePlate();
-
+            clipHeight = 1.82;
             clipWidth = 3.55;
-            // Right side
-            translate([backplate_width - backplate_borderThickness - 1, 7.90 + clipWidth, 2.70]) rotate([0, 0, -90]) clip(width = clipWidth);
-            translate([backplate_width - backplate_borderThickness - 1, backplate_height - 8.90, 2.70]) rotate([0, 0, -90]) clip(width = clipWidth);
-
+            clipMaxThickness = 1;
+            borderOffset = 1.40;
             // Left side
-            translate([backplate_borderThickness + 1, 8.93, 2.70]) rotate([0, 0, 90]) clip(width = clipWidth);
-            translate([backplate_borderThickness + 1, backplate_height - 8.99 - clipWidth, 2.70]) rotate([0, 0, 90]) clip(width = clipWidth);
+            translate([clipMaxThickness + borderOffset, 8.93, 0]) rotate([0, 0, 90]) clip(width = clipWidth);
+            translate([clipMaxThickness + borderOffset, backplate_height - 8.99 - clipWidth, 0]) rotate([0, 0, 90]) clip(width = clipWidth);
+            
+            // Right side
+            translate([backplate_width - clipMaxThickness - borderOffset, 7.90 + clipWidth, 0]) rotate([0, 0, -90]) clip(width = clipWidth);
+            translate([backplate_width - clipMaxThickness - borderOffset, backplate_height - 8.90, 0]) rotate([0, 0, -90]) clip(width = clipWidth);
         }
 
-        translate([2, 8, -5]) speakerGrill();
+        translate([4, 8, -5]) speakerGrill();
     }
 }
 

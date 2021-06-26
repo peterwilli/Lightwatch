@@ -88,7 +88,7 @@ impl LucidDreamingApplication {
                     "accel: {}x{}x{} [{}]",
                     accel.x, accel.y, accel.z, accel_avg
                 ));
-                return accel_avg > 50;
+                return accel_avg > 15;
             } else if matches!(breaker, LDVibrationBreaker::AutoDismiss) {
                 return true;
             } else if matches!(breaker, LDVibrationBreaker::ButtonCount) {
