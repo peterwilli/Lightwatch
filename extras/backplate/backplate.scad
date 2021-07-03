@@ -67,7 +67,8 @@ module clip(width = 2, height = 1.82, thickness = 0.95, topThickness = 0.2, topH
     color([0.6, 0.1, 0.5]) {
         intersection() {
             translate([0, 0, bottomHeight]) union() {
-                translate([0, thickness, height - (topThickness * 0.5)]) scale([1, 1, 0.5]) rotate([90, 0, 90]) cylinder(r=topThickness, h=width, center=false, $fn=50);
+                roundTopScale = 1;
+                translate([0, thickness, height - (topThickness * roundTopScale)]) scale([1, 1, roundTopScale]) rotate([90, 0, 90]) cylinder(r=topThickness, h=width, center=false, $fn=50);
                 cube([width, thickness, height]);
                 translate([0, 0, bottomHeight * -1]) cube([width, bottomThickness, bottomHeight]);
             }
