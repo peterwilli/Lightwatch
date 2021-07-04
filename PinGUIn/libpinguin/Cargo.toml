@@ -9,3 +9,8 @@ edition = "2018"
 [dependencies]
 quadtree_rs = "0.1.2"
 no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
+libc-print = "0.1.16"
+
+[dependencies.num]
+version = "0.4"
+default-features = false
