@@ -58,21 +58,25 @@ impl SystemApplication for HomeScreenApplication {
     }
 
     fn init(&mut self) {
-        unsafe {
-            fillScreen(1929);
-            setTextColor(400);
-        }
-        let mut label = Box::new(Label::new(10, 10, 100, 100));
-        label.text = Some("Hello Loves".to_string());
-        let mut button = Box::new(Button::new(10, 30, 100, 100));
-        button.text = Some("Button".to_string());
-        button.on_tap = Some(Box::new(|| {
-            launch_app(Box::new(LucidDreamingApplication::new()));
-        }));
-        self.gui_renderer.elements.push(label);
-        self.gui_renderer.elements.push(button);
         if unsafe { getRTCDataAtIndex(0) } > 0 {
             launch_app(Box::new(LucidDreamingApplication::new()));
+        } else {
+            unsafe {
+                setBrightness(150);
+            }
+            unsafe {
+                fillScreen(1929);
+                setTextColor(400);
+            }
+            let mut label = Box::new(Label::new(10, 10, 100, 100));
+            label.text = Some("Hello Loves".to_string());
+            let mut button = Box::new(Button::new(10, 30, 100, 100));
+            button.text = Some("Button".to_string());
+            button.on_tap = Some(Box::new(|| {
+                launch_app(Box::new(LucidDreamingApplication::new()));
+            }));
+            self.gui_renderer.elements.push(label);
+            self.gui_renderer.elements.push(button);
         }
     }
 

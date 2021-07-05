@@ -32,9 +32,6 @@ extern crate alloc;
 static A: LibcAllocator = LibcAllocator;
 #[no_mangle]
 pub extern "C" fn rust_bb_init() {
-    unsafe {
-        setBrightness(150);
-    }
     let mut current_app = HomeScreenApplication::new();
     current_app.init();
     loop {

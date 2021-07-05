@@ -1,6 +1,7 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
+use crate::input::touch_input;
 use crate::input::*;
 use crate::non_official_c_bindings::*;
 use crate::system_applications::system_application::*;
@@ -13,6 +14,8 @@ use core::ffi::c_void;
 use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
+
+static test: bool = false;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
@@ -55,7 +58,7 @@ impl LucidDreamingApplication {
 
     fn random_vibration_pattern() -> Vec<u16> {
         // Silence not included
-        let pattern_length = unsafe { esp_random() } % 5;
+        let pattern_length = 2 + (unsafe { esp_random() } % 5);
         let mut result: Vec<u16> = Vec::new();
         for i in 0..pattern_length {
             let vibration_start = 200 + ((unsafe { esp_random() } % 700) as u16);
@@ -269,13 +272,23 @@ impl SystemApplication for LucidDreamingApplication {
             let rausis_selected_hours_lock = self.rausis_selected_hours.clone();
             let rausis2_selected_minutes_lock = self.rausis2_selected_minutes.clone();
             button.on_tap = Some(Box::new(move || {
-                let deep_sleep_secs = *rausis_selected_hours_lock.lock() as u32 * 60 * 60;
-                // let deep_sleep_secs = 1;
+                let deep_sleep_secs = if test {
+                    1
+                } else {
+                    *rausis_selected_hours_lock.lock() as u32 * 60 * 60
+                };
                 if deep_sleep_secs > 0 {
                     SerialLogger::println(format!("deep sleep for {} seconds", deep_sleep_secs));
                     unsafe {
                         setRTCDataAtIndex(0, 1);
-                        setRTCDataAtIndex(1, *rausis2_selected_minutes_lock.lock());
+                        setRTCDataAtIndex(
+                            1,
+                            if test {
+                                1
+                            } else {
+                                *rausis2_selected_minutes_lock.lock()
+                            },
+                        );
                         deepSleep(deep_sleep_secs * 1000);
                     }
                 }
@@ -283,6 +296,7 @@ impl SystemApplication for LucidDreamingApplication {
             self.gui_renderer.elements.push(button);
         } else if self.alarm_state == 1 {
             unsafe {
+                setBrightness(0);
                 enableVibrator();
             }
             let random_vibration_pattern = Self::random_vibration_pattern();
@@ -312,14 +326,39 @@ impl SystemApplication for LucidDreamingApplication {
                 }
             } else {
                 self.rausis_2 = (preset_mins as u32) * 60;
+                if test {
+                    self.rausis_2 = 5000;
+                }
+            }
+            while unsafe { getTouch(&mut touch_input.x, &mut touch_input.y) } == 0 {
+                unsafe {
+                    vibrate(10);
+                    delay(100);
+                }
             }
             SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
             unsafe {
+                'outer_buttontimer: loop {
+                    while getTouch(&mut touch_input.x, &mut touch_input.y) == 1 {
+                        SerialLogger::println("Delaying cause screen press".to_string());
+                        delay(100);
+                    }
+                    let start_ms = millis();
+                    while (millis() - start_ms) < self.rausis_2 {
+                        SerialLogger::println("Delaying cause no press".to_string());
+                        if getTouch(&mut touch_input.x, &mut touch_input.y) == 1 {
+                            continue 'outer_buttontimer;
+                        }
+                        delay(100);
+                    }
+                    break;
+                }
                 setRTCDataAtIndex(0, 2);
-                deepSleep(self.rausis_2 * 1000);
+                deepSleep(1000);
             }
         } else if self.alarm_state == 2 {
             unsafe {
+                setBrightness(0);
                 enableVibrator();
                 enableAccelerometer();
             }
