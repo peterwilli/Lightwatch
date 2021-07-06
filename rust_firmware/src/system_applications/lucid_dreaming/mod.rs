@@ -344,7 +344,7 @@ impl SystemApplication for LucidDreamingApplication {
                         delay(100);
                     }
                     let start_ms = millis();
-                    while (millis() - start_ms) < self.rausis_2 {
+                    while (millis() - start_ms) < self.rausis_2 * 1000 {
                         SerialLogger::println("Delaying cause no press".to_string());
                         if getTouch(&mut touch_input.x, &mut touch_input.y) == 1 {
                             continue 'outer_buttontimer;
