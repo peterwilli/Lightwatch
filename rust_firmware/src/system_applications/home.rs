@@ -62,10 +62,10 @@ impl SystemApplication for HomeScreenApplication {
             launch_app(Box::new(LucidDreamingApplication::new()));
         } else {
             unsafe {
-                setBrightness(150);
+                setBrightness(50);
             }
             unsafe {
-                fillScreen(1929);
+                fillScreen(0);
                 setTextColor(400);
             }
             let mut label = Box::new(Label::new(10, 10, 100, 100));
