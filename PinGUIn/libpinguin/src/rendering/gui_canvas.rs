@@ -1,6 +1,6 @@
 use crate::common::to_qtree_region;
 use crate::elements::*;
-use crate::utils::println;
+use crate::println;
 use alloc::prelude::v1::Box;
 use alloc::vec::Vec;
 use core::convert::TryInto;
@@ -35,7 +35,7 @@ impl<T: From<i16> + num::PrimInt + Default> GuiCanvas<T> {
             .unwrap();
         let mut query = self.quadtree.query(area);
         for idx in query {
-            println!()
+            println!("idx {}", idx.value_ref());
         }
     }
 

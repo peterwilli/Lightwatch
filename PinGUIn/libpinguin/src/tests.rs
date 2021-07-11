@@ -4,8 +4,8 @@ mod tests {
     use crate::common::Rect;
     use crate::elements::gui_element::GuiElement;
     use crate::elements::Button;
+    use crate::println;
     use crate::rendering::GuiCanvas;
-    use crate::utils::println;
     use alloc::prelude::v1::Box;
     use alloc::string::String;
     use alloc::vec::Vec;
