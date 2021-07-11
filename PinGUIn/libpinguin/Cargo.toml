@@ -1,5 +1,5 @@
 [package]
-name = "PinGUIn"
+name = "libpinguin"
 version = "0.1.0"
 authors = ["Peter Willemsen <peter@codebuffet.co>"]
 edition = "2018"
@@ -7,9 +7,14 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-quadtree_rs = "0.1.2"
+libc-print = { version = "0.1.16", optional = true }
+quadtree_rs = { path = "../quadtree", default-features = false }
 no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
-libc-print = "0.1.16"
+
+
+[features]
+default = ["print-stdout"]
+print-stdout = ["libc-print"]
 
 [dependencies.num]
 version = "0.4"

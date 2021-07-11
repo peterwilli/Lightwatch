@@ -7,3 +7,4 @@ mod common;
 mod elements;
 mod rendering;
 mod tests;
+mod utils;

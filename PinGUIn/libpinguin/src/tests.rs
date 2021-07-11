@@ -5,10 +5,10 @@ mod tests {
     use crate::elements::gui_element::GuiElement;
     use crate::elements::Button;
     use crate::rendering::GuiCanvas;
+    use crate::utils::println;
     use alloc::prelude::v1::Box;
     use alloc::string::String;
     use alloc::vec::Vec;
-    use libc_print::libc_println;
     use quadtree_rs::{area::AreaBuilder, point::Point, Quadtree};
 
     #[test]
@@ -21,7 +21,7 @@ mod tests {
         }));
         button.text = Some("Button".to_string());
         button.on_tap = Some(Box::new(|| {
-            libc_println!("Button tap!");
+            println!("Button tap!");
         }));
         let mut gui_canvas = GuiCanvas::<i16>::new();
         gui_canvas.add_element(button);
