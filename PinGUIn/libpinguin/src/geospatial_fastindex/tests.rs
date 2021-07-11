@@ -15,16 +15,41 @@ mod tests {
             },
             1,
         );
+        fastindex.add(
+            Rect {
+                x: 0,
+                y: 0,
+                w: 10,
+                h: 10,
+            },
+            2,
+        );
         let result = fastindex.find(Rect {
             x: 1,
             y: 5,
             w: 1,
             h: 1,
         });
-        println!("Find result:");
-        for res in result {
-            println!("Idx: {}", res);
-        }
+        assert_eq!(result[0], 1);
+        assert_eq!(result[1], 2);
+        fastindex.add(
+            Rect {
+                x: 5,
+                y: 0,
+                w: 10,
+                h: 10,
+            },
+            3,
+        );
+        let result = fastindex.find(Rect {
+            x: 1,
+            y: 5,
+            w: 1,
+            h: 1,
+        });
+        assert_eq!(result[0], 1);
+        assert_eq!(result[1], 2);
+        assert_eq!(result[2], 3);
     }
 
     #[test]

@@ -60,7 +60,7 @@ impl<
                     (rect_tiles.x + tile_x).into(),
                     (rect_tiles.y + tile_y).into(),
                 );
-                items.append(self.grid.get_mut(&tuple).unwrap());
+                items.append(&mut self.grid.get(&tuple).unwrap().clone());
                 tile_x += T::one();
             }
             tile_y += T::one();
