@@ -4,4 +4,4 @@ use crate::common::Rect;
 
 pub use button::Button;
 pub use gui_element::*;
-type GuiRect = Rect<i16>;
+pub type GuiRect = Rect<i16>;

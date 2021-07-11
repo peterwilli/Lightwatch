@@ -1,5 +1,5 @@
-use crate::common::to_qtree_region;
 use crate::common::Rect;
+use crate::elements::GuiRect;
 use crate::elements::*;
 use crate::geospatial_fastindex::GeoSpatialFastIndex;
 use crate::println;
@@ -94,25 +94,25 @@ impl<T: From<i16> + Into<i16> + num::PrimInt + Default> GuiCanvas<T> {
 
     pub fn add_element(&mut self, element: Box<GuiElement>) {
         let rect = element.get_bounds();
-        let area = rect.to_qtree_area::<T>();
-        let handle = self
-            .quadtree
-            .insert(area, self.elements.len().try_into().unwrap())
-            .expect("quadtree insert failed!");
-        println!("handle: {}", handle);
-        self.elements.push(element);
+        // let area = rect.to_qtree_area::<T>();
+        // let handle = self
+        //     .quadtree
+        //     .insert(area, self.elements.len().try_into().unwrap())
+        //     .expect("quadtree insert failed!");
+        // println!("handle: {}", handle);
+        // self.elements.push(element);
     }
 
-    pub fn transform_element(&mut self, element_id: usize, new_rect: Rect) {
+    pub fn transform_element(&mut self, element_id: usize, new_rect: GuiRect) {
         let mut element = self.elements[element_id].as_mut();
-        let area = new_rect.to_qtree_area::<T>();
-        element.transform(new_rect);
-        self.quadtree
-            .delete_by_handle(element_id.try_into().unwrap());
-        let handle = self
-            .quadtree
-            .insert(area, self.elements.len().try_into().unwrap())
-            .expect("quadtree insert failed!");
-        println!("[transform_element] handle: {}", handle);
+        // let area = new_rect.to_qtree_area::<T>();
+        // element.transform(new_rect);
+        // self.quadtree
+        //     .delete_by_handle(element_id.try_into().unwrap());
+        // let handle = self
+        //     .quadtree
+        //     .insert(area, self.elements.len().try_into().unwrap())
+        //     .expect("quadtree insert failed!");
+        // println!("[transform_element] handle: {}", handle);
     }
 }

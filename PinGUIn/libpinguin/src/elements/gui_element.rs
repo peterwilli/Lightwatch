@@ -1,4 +1,4 @@
-use crate::common::Rect;
+use crate::elements::GuiRect;
 use core::any::Any;
 
 pub struct GuiElementPixel {
@@ -20,12 +20,12 @@ impl GuiElementPixel {
 }
 
 pub trait GuiElement {
-    fn new(r: Rect) -> Self
+    fn new(r: GuiRect) -> Self
     where
         Self: Sized;
-    fn transform(&mut self, new_rect: Rect);
+    fn transform(&mut self, new_rect: GuiRect);
     fn r#loop(&mut self);
-    fn get_bounds(&self) -> &Rect;
+    fn get_bounds(&self) -> &GuiRect;
     fn is_inside(&self, x: u16, y: u16) -> bool;
     fn get_pixel(&self, x: u16, y: u16, output: &mut GuiElementPixel);
     fn as_any(&mut self) -> &mut dyn Any;

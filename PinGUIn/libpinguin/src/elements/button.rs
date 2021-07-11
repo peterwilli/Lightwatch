@@ -18,7 +18,7 @@ pub struct Button {
 }
 
 impl GuiElement for Button {
-    fn new(rect: Rect) -> Self {
+    fn new(rect: GuiRect) -> Self {
         return Button {
             rect: rect,
             text: None,
@@ -29,11 +29,11 @@ impl GuiElement for Button {
         };
     }
 
-    fn transform(&mut self, new_rect: Rect) {
+    fn transform(&mut self, new_rect: GuiRect) {
         self.rect = new_rect;
     }
 
-    fn get_bounds(&self) -> &Rect {
+    fn get_bounds(&self) -> &GuiRect {
         return &self.rect;
     }
 
