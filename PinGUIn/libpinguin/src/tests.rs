@@ -37,21 +37,23 @@ mod tests {
             h: 30,
         }));
         button.text = Some("Button".to_string());
-        button.on_tap = Some(Box::new(|| {
-            println!("Button tap!");
-        }));
         let mut gui_canvas = GuiCanvas::<i16>::new();
         gui_canvas.add_element(button);
-        gui_canvas.tap(0, 0);
-
+        gui_canvas.transform_element(
+            0,
+            Rect {
+                x: 20,
+                y: 0,
+                w: 100,
+                h: 30,
+            },
+        );
         let mut img: RgbImage = ImageBuffer::new(512, 512);
         let (width, height) = img.dimensions();
         let mut current_pixel = GuiPixel::new();
         for y in 0..height {
             for x in 0..width {
-                current_pixel.reset();
                 gui_canvas.get_pixel(x as i16, y as i16, &mut current_pixel);
-                println!("current_pixel: {}", current_pixel);
                 let pixel = image::Rgb([current_pixel.r, current_pixel.g, current_pixel.b]);
                 img.put_pixel(x, y, pixel);
             }

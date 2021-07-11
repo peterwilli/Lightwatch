@@ -1,5 +1,7 @@
 use crate::common::to_qtree_region;
+use crate::common::Rect;
 use crate::elements::*;
+use crate::geospatial_fastindex::GeoSpatialFastIndex;
 use crate::println;
 use alloc::prelude::v1::Box;
 use alloc::vec::Vec;
@@ -55,8 +57,10 @@ impl<T: From<i16> + Into<i16> + num::PrimInt + Default> GuiCanvas<T> {
             .unwrap();
         let mut query = self.quadtree.query(area);
         let mut pixel = GuiElementPixel::new();
+        let mut has_changed = false;
         for idx in query {
-            let idx = (*idx.value_ref() as usize) - 1;
+            has_changed = true;
+            let idx = *idx.value_ref() as usize;
             let element = &self.elements[idx];
             let bounds = element.get_bounds();
             let local_x: u16 = (x.into() - bounds.x).try_into().unwrap();
@@ -66,6 +70,9 @@ impl<T: From<i16> + Into<i16> + num::PrimInt + Default> GuiCanvas<T> {
             output.r = pixel.r;
             output.g = pixel.g;
             output.b = pixel.b;
+        }
+        if !has_changed {
+            output.reset();
         }
     }
 
@@ -77,7 +84,7 @@ impl<T: From<i16> + Into<i16> + num::PrimInt + Default> GuiCanvas<T> {
             .unwrap();
         let mut query = self.quadtree.query(area);
         let button_index = query.next().expect("No element found").value_ref();
-        let button_index = (*button_index as usize) - 1;
+        let button_index = *button_index as usize;
         let mut button: &mut Button = self.elements[button_index]
             .as_any()
             .downcast_mut::<Button>()
@@ -88,8 +95,24 @@ impl<T: From<i16> + Into<i16> + num::PrimInt + Default> GuiCanvas<T> {
     pub fn add_element(&mut self, element: Box<GuiElement>) {
         let rect = element.get_bounds();
         let area = rect.to_qtree_area::<T>();
+        let handle = self
+            .quadtree
+            .insert(area, self.elements.len().try_into().unwrap())
+            .expect("quadtree insert failed!");
+        println!("handle: {}", handle);
         self.elements.push(element);
+    }
+
+    pub fn transform_element(&mut self, element_id: usize, new_rect: Rect) {
+        let mut element = self.elements[element_id].as_mut();
+        let area = new_rect.to_qtree_area::<T>();
+        element.transform(new_rect);
         self.quadtree
-            .insert(area, self.elements.len().try_into().unwrap());
+            .delete_by_handle(element_id.try_into().unwrap());
+        let handle = self
+            .quadtree
+            .insert(area, self.elements.len().try_into().unwrap())
+            .expect("quadtree insert failed!");
+        println!("[transform_element] handle: {}", handle);
     }
 }

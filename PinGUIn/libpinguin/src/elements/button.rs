@@ -1,6 +1,7 @@
 use crate::common::Rect;
 use crate::elements::GuiElement;
 use crate::elements::GuiElementPixel;
+use crate::elements::GuiRect;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
 use alloc::sync::Arc;
@@ -8,7 +9,7 @@ use core::any::Any;
 use no_std_compat::sync::Mutex;
 
 pub struct Button {
-    rect: Rect,
+    rect: GuiRect,
     pub text: Option<String>,
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,
@@ -26,6 +27,10 @@ impl GuiElement for Button {
             on_tap: None,
             needs_redraw: None,
         };
+    }
+
+    fn transform(&mut self, new_rect: Rect) {
+        self.rect = new_rect;
     }
 
     fn get_bounds(&self) -> &Rect {

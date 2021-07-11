@@ -1,13 +1,13 @@
 use std::fmt;
 
-pub struct Rect {
-    pub x: i16,
-    pub y: i16,
-    pub w: i16,
-    pub h: i16,
+pub struct Rect<T: num::PrimInt + Default> {
+    pub x: T,
+    pub y: T,
+    pub w: T,
+    pub h: T,
 }
 
-impl fmt::Display for Rect {
+impl<T: num::PrimInt + Default> fmt::Display for Rect<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}x{}x{}x{}", self.x, self.y, self.w, self.h)
     }

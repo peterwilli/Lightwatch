@@ -23,7 +23,7 @@ pub trait GuiElement {
     fn new(r: Rect) -> Self
     where
         Self: Sized;
-
+    fn transform(&mut self, new_rect: Rect);
     fn r#loop(&mut self);
     fn get_bounds(&self) -> &Rect;
     fn is_inside(&self, x: u16, y: u16) -> bool;
