@@ -8,6 +8,17 @@ pub struct GuiElementPixel {
     pub a: u8,
 }
 
+impl GuiElementPixel {
+    pub fn new() -> Self {
+        return GuiElementPixel {
+            r: 0,
+            g: 0,
+            b: 0,
+            a: 0,
+        };
+    }
+}
+
 pub trait GuiElement {
     fn new(r: Rect) -> Self
     where

@@ -37,7 +37,7 @@ impl GuiElement for Button {
     }
 
     fn get_pixel(&self, x: u16, y: u16, output: &mut GuiElementPixel) {
-        output.r = 1;
+        output.r = 255;
     }
 
     fn r#loop(&mut self) {}
