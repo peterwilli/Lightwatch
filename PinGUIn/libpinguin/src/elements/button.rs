@@ -1,4 +1,5 @@
 use crate::common::Rect;
+use crate::elements::GuiData;
 use crate::elements::GuiElement;
 use crate::elements::GuiElementPixel;
 use crate::elements::GuiRect;
@@ -6,10 +7,11 @@ use alloc::prelude::v1::Box;
 use alloc::string::String;
 use alloc::sync::Arc;
 use core::any::Any;
+use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 
-pub struct Button {
-    rect: GuiRect,
+pub struct Button<T: GuiData> {
+    rect: Rect<T>,
     pub text: Option<String>,
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,
@@ -17,8 +19,8 @@ pub struct Button {
     needs_redraw: Option<Arc<Mutex<bool>>>,
 }
 
-impl GuiElement for Button {
-    fn new(rect: GuiRect) -> Self {
+impl<T: GuiData> GuiElement<T> for Button<T> {
+    fn new(rect: Rect<T>) -> Self {
         return Button {
             rect: rect,
             text: None,
@@ -29,19 +31,19 @@ impl GuiElement for Button {
         };
     }
 
-    fn transform(&mut self, new_rect: GuiRect) {
+    fn transform(&mut self, new_rect: Rect<T>) {
         self.rect = new_rect;
     }
 
-    fn get_bounds(&self) -> &GuiRect {
+    fn get_bounds(&self) -> &Rect<T> {
         return &self.rect;
     }
 
-    fn is_inside(&self, x: u16, y: u16) -> bool {
+    fn is_inside(&self, x: T, y: T) -> bool {
         return true;
     }
 
-    fn get_pixel(&self, x: u16, y: u16, output: &mut GuiElementPixel) {
+    fn get_pixel(&self, x: T, y: T, output: &mut GuiElementPixel) {
         output.r = 255;
     }
 
