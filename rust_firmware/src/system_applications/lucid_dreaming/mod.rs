@@ -371,7 +371,7 @@ impl SystemApplication for LucidDreamingApplication {
                 enableAccelerometer();
             }
             let pre_second_end_trigger = self.vibrate_while(
-                &vec![100, 2500, 100, 250, 100, 2500],
+                &vec![100, 5000],
                 25 * 1000,
                 LDVibrationBreaker::ShakeAutoDismiss,
             );
