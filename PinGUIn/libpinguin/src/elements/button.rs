@@ -1,5 +1,5 @@
+use crate::common::GuiNumber;
 use crate::common::Rect;
-use crate::elements::GuiData;
 use crate::elements::GuiElement;
 use crate::elements::GuiElementPixel;
 use crate::elements::GuiRect;
@@ -10,8 +10,8 @@ use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 
-pub struct Button<T: GuiData> {
-    rect: Rect<T>,
+pub struct Button<T: GuiNumber> {
+    rect: Rect<GuiNumber>,
     pub text: Option<String>,
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,
@@ -19,7 +19,7 @@ pub struct Button<T: GuiData> {
     needs_redraw: Option<Arc<Mutex<bool>>>,
 }
 
-impl<T: GuiData> GuiElement<T> for Button<T> {
+impl<T: GuiNumber> GuiElement<T> for Button<T> {
     fn new(rect: Rect<T>) -> Self {
         return Button {
             rect: rect,

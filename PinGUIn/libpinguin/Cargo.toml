@@ -8,7 +8,6 @@ edition = "2018"
 
 [dependencies]
 libc-print = { version = "0.1.16", optional = true }
-quadtree_rs = { path = "../quadtree", default-features = false }
 no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
 
 [dev-dependencies]

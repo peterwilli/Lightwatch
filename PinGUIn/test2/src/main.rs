@@ -1,11 +1,25 @@
+use core::default::Default;
 use core::ops::{AddAssign, Div};
 
-trait GuiData {}
+pub trait BasicGuiData {}
 
-impl<T: AddAssign + PartialOrd<T> + Div<T> + Default> GuiData for T {}
+impl<T: num::PrimInt + AddAssign + Default> BasicGuiData for T {}
 
-struct Button<T: GuiData> {
+pub trait GuiData {}
+
+impl<T: PartialOrd<T> + Div<T>> GuiData for T {}
+
+struct Button<T: BasicGuiData + GuiData> {
     pub test: T,
+    rect: Rect<T>,
+}
+
+#[derive(PartialEq, Debug)]
+pub struct Rect<T: BasicGuiData> {
+    pub x: T,
+    pub y: T,
+    pub w: T,
+    pub h: T,
 }
 
 fn main() {

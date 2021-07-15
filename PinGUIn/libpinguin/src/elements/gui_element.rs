@@ -1,6 +1,6 @@
+use crate::common::GuiNumber;
 use crate::elements::Rect;
 use core::any::Any;
-use core::ops::{AddAssign, Div, Sub};
 
 pub struct GuiElementPixel {
     pub r: u8,
@@ -20,13 +20,9 @@ impl GuiElementPixel {
     }
 }
 
-pub trait GuiData {}
-
-impl<T: num::PrimInt + AddAssign + PartialOrd<T> + Div<T> + Default> GuiData for T {}
-
 pub trait GuiElement<T>
 where
-    T: GuiData,
+    T: GuiNumber,
 {
     fn new(r: Rect<T>) -> Self
     where
