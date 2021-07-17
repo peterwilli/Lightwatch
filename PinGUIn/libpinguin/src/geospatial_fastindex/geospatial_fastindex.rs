@@ -5,6 +5,7 @@ use alloc::vec::Vec;
 use core::convert::TryInto;
 use core::hash::Hash;
 use core::ops::{Add, Div, Range};
+use crate::println;
 use std::prelude::v1::*;
 use std::collections::HashMap;
 
@@ -45,8 +46,8 @@ impl<
         };
     }
 
-    pub fn find(&mut self, rect: Rect<T>) -> Vec<O> {
-        let rect_tiles = self.rect_to_tiles(&rect);
+    pub fn find(&mut self, rect: &Rect<T>) -> Vec<O> {
+        let rect_tiles = self.rect_to_tiles(rect);
         let mut tile_y = T::zero();
         let mut items: Vec<O> = vec![];
         loop {
@@ -62,11 +63,15 @@ impl<
                     (rect_tiles.x + tile_x).into(),
                     (rect_tiles.y + tile_y).into(),
                 );
-                items.append(&mut self.grid.get_mut(&tuple).unwrap());
+                let possible_tile = self.grid.get(&tuple);
+                if possible_tile.is_some() {
+                    items.append(&mut possible_tile.unwrap().clone());
+                }
                 tile_x += T::one();
             }
             tile_y += T::one();
         }
+
         return items;
     }
 

@@ -27,7 +27,7 @@ mod tests {
         );
         for i in 0..2 {
             println!("Tryout {}", i);
-            let result = fastindex.find(Rect::<u8> {
+            let result = fastindex.find(&Rect::<u8> {
                 x: 1,
                 y: 5,
                 w: 1,
@@ -45,15 +45,12 @@ mod tests {
             },
             3,
         );
-        let result = fastindex.find(Rect {
+        let result = fastindex.find(&Rect {
             x: 1,
             y: 5,
             w: 1,
             h: 1,
         });
-        for r in &result {
-            println!("r: {}", r);
-        }
         assert_eq!(result[0], 1);
         assert_eq!(result[1], 2);
         assert_eq!(result[2], 3);
