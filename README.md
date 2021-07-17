@@ -30,11 +30,13 @@ Text `like this` are commands!
 
   - In the next steps, be sure to run `lw` in this repo's directory!
 
-- You can now run any of the following:
+- You can now run any of the following (For building and upload):
 
   - `lw build-rust-blob` <- Builds the rust binary blob and automatically copies it over to the Arduino project.
-  - `build-arduino` <- Compiles the Arduino project
-  - `upload` <- Compiles the Arduino project, and uploads the compiled project to your device if it's plugged in. The first time you run this you will be asked to provide a path to the plugged in device. Be sure to follow the output of the upload command.
+  - `lw upload` <- Compiles the Arduino project, and uploads the compiled project to your device if it's plugged in. The first time you run this you will be asked to provide a path to the plugged in device. Be sure to follow the output of the upload command.
+  - `lw build-arduino` <- Compiles the Arduino project.
+
+  For a simple build and upload to your device, you only have to run the first 2 commands.
 
 - Good luck, it should run!
 
