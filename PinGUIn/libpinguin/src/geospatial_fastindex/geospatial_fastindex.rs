@@ -9,7 +9,7 @@ use crate::println;
 use std::prelude::v1::*;
 use std::collections::HashMap;
 
-struct ObjectHolder<T: GuiNumber, O> {
+pub struct ObjectHolder<T: GuiNumber, O> {
     rect: Rect<T>,
     object: O
 }
@@ -23,7 +23,8 @@ pub struct GeoSpatialFastIndex<
     pub tile_height: T,
     pub grid_width: G,
     pub grid_height: G,
-    pub grid: HashMap<(G, G), Vec<ObjectHolder<T, O>>>,
+    pub added_objects: Vec<ObjectHolder<T, O>>,
+    pub grid: HashMap<(G, G), Vec<usize>>,
 }
 
 impl<
@@ -39,6 +40,7 @@ impl<
             grid_width: grid_width,
             grid_height: grid_height,
             grid: HashMap::new(),
+            added_objects: Vec::new()
         };
     }
 
@@ -70,7 +72,8 @@ impl<
                 );
                 let possible_tile = self.grid.get(&tuple);
                 if possible_tile.is_some() {
-                    for held_object in possible_tile.unwrap() {
+                    for held_object_index in possible_tile.unwrap() {
+                        let held_object = self.added_objects.get(*held_object_index).unwrap();
                         if rect.is_inside(&held_object.rect) {
                             items.push(held_object.object);
                         }
@@ -84,10 +87,17 @@ impl<
         return items;
     }
 
-    pub fn add(&mut self, rect: &Rect<T>, object: O)
+    pub fn add(&mut self, rect: Rect<T>, object: O)
     {
         let rect_tiles = self.rect_to_tiles(&rect);
         let mut tile_y = T::zero();
+        let held_object = ObjectHolder::<T, O> {
+            rect: rect,
+            object: object
+        };
+        self.added_objects.push(held_object);
+        let held_object_index = self.added_objects.len() - 1;
+
         //... Seriously? How to you do range loops on type generics?!
         loop {
             if tile_y > rect_tiles.h {
@@ -102,17 +112,10 @@ impl<
                     (rect_tiles.x + tile_x).into(),
                     (rect_tiles.y + tile_y).into(),
                 );
-                let held_object = ObjectHolder {
-                    rect: Rect {
-                        x:0,
-                        y:0,w:0,h:0
-                    },
-                    object: object
-                };
                 if self.grid.contains_key(&tuple) {
-                    self.grid.get_mut(&tuple).unwrap().push(held_object);
+                    self.grid.get_mut(&tuple).unwrap().push(held_object_index);
                 } else {
-                    self.grid.insert(tuple, vec![held_object]);
+                    self.grid.insert(tuple, vec![held_object_index]);
                 }
                 tile_x += T::one();
             }

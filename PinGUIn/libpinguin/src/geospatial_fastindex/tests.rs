@@ -8,7 +8,7 @@ mod tests {
     fn test_add_tile() {
         let mut fastindex = GeoSpatialFastIndex::<u8, u8, u8>::new(10, 10, 10, 10);
         fastindex.add(
-            &Rect::<u8> {
+            Rect::<u8> {
                 x: 0,
                 y: 0,
                 w: 10,
@@ -17,7 +17,7 @@ mod tests {
             1,
         );
         fastindex.add(
-            &Rect::<u8> {
+            Rect::<u8> {
                 x: 0,
                 y: 0,
                 w: 10,
@@ -37,7 +37,7 @@ mod tests {
             assert_eq!(result[1], 2);
         }
         fastindex.add(
-            &Rect::<u8> {
+            Rect::<u8> {
                 x: 0,
                 y: 0,
                 w: 10,
@@ -46,7 +46,7 @@ mod tests {
             3,
         );
         fastindex.add(
-            &Rect::<u8> {
+            Rect::<u8> {
                 x: 2,
                 y: 0,
                 w: 10,

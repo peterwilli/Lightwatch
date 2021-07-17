@@ -10,12 +10,11 @@ pub struct Rect<T: GuiNumber> {
     pub h: T,
 }
 
-impl<T: GuiNumber + std::ops::Add<Output = T> + std::cmp::PartialOrd> Rect<T> {
+impl<T: GuiNumber + Copy + std::ops::Add<Output = T> + std::cmp::PartialOrd> Rect<T> {
     pub fn is_inside(&self, other_rect: &Rect<T>) -> bool {
-        return (
+        return
             self.x > other_rect.x && self.x < other_rect.x + other_rect.w &&
             self.y > other_rect.y && self.y < other_rect.y + other_rect.h
-        )
     }
 }
 
