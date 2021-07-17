@@ -11,7 +11,7 @@ use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 
 pub struct Button<T: GuiNumber> {
-    rect: Rect<GuiNumber>,
+    rect: Rect<T>,
     pub text: Option<String>,
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,

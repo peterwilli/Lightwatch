@@ -4,6 +4,7 @@ use crate::elements::*;
 use crate::geospatial_fastindex::GeoSpatialFastIndex;
 use crate::println;
 use alloc::prelude::v1::Box;
+use crate::common::GuiNumber;
 use alloc::vec::Vec;
 use core::convert::TryInto;
 use core::hash::Hash;
@@ -35,16 +36,16 @@ impl GuiPixel {
 }
 
 pub struct GuiCanvas<
-    T: num::PrimInt + AddAssign + PartialOrd<T> + Default + Div<T>,
-    G: num::PrimInt + Default + Hash + From<T>,
+    T: GuiNumber,
+    G: GuiNumber
 > {
     elements: Vec<Box<dyn GuiElement<T>>>,
     geospatial_fastindex: GeoSpatialFastIndex<T, G, u16>,
 }
 
 impl<
-        T: num::PrimInt + AddAssign + PartialOrd<T> + Default + Div<T>,
-        G: num::PrimInt + Default + Hash + From<T>,
+        T: GuiNumber,
+        G: GuiNumber,
     > GuiCanvas<T, G>
 {
     pub fn new(tile_width: T, tile_height: T, grid_width: G, grid_height: G) -> Self {

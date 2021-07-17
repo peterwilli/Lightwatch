@@ -27,8 +27,11 @@ RUN cargo install cargo-xbuild
 
 RUN echo "Compiling Rust with the Xtensa patches... This is gonna take forever!" && \
 	$BUILD_DIR/rust-xtensa/configure --experimental-targets=Xtensa && \
-	$BUILD_DIR/rust-xtensa/x.py build --stage 2
-RUN $BUILD_DIR/rust-xtensa/x.py clean
+	$BUILD_DIR/rust-xtensa/x.py build --stage 2 && \
+	# Cleaning up
+	cd $BUILD_DIR/build && rm -rf bootstrap cache tmp && \
+	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1*
+
 ENV XARGO_RUST_SRC=$BUILD_DIR/rust-xtensa/library
 ENV RUSTC=$BUILD_DIR/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
 ENV RUST_BACKTRACE=1 

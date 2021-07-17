@@ -1,15 +1,17 @@
 use crate::common::Rect;
+use crate::common::GuiNumber;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::convert::TryInto;
 use core::hash::Hash;
 use core::ops::{Add, Div, Range};
-use no_std_compat::collections::HashMap;
+use std::prelude::v1::*;
+use std::collections::HashMap;
 
 pub struct GeoSpatialFastIndex<
-    T: num::PrimInt + Default + Div<T>,
-    G: num::PrimInt + Default + Hash,
-    O: Default,
+    T: GuiNumber,
+    G: GuiNumber,
+    O: GuiNumber,
 > {
     pub tile_width: T,
     pub tile_height: T,
@@ -19,9 +21,9 @@ pub struct GeoSpatialFastIndex<
 }
 
 impl<
-        T: num::PrimInt + std::ops::AddAssign + PartialOrd<T> + Default + Div<T>,
-        G: num::PrimInt + Default + Hash + From<T>,
-        O: Clone + Default,
+        T: GuiNumber,
+        G: GuiNumber,
+        O: GuiNumber,
     > GeoSpatialFastIndex<T, G, O>
 {
     pub fn new(tile_width: T, tile_height: T, grid_width: G, grid_height: G) -> Self {

@@ -8,7 +8,7 @@ edition = "2018"
 
 [dependencies]
 libc-print = { version = "0.1.16", optional = true }
-no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
+no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync", "compat_hash" ] }
 
 [dev-dependencies]
 image = "0.23.14"
