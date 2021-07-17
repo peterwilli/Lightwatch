@@ -22,5 +22,20 @@ The second one has development scripts specifically for the Lightwatch firmware,
 
 With the instructions below, I assume you either run Linux with a working Docker installation. It should work on other operating systems, but is untested.
 
+Text `like this` are commands!
+
+- Start by cloning this repo: `git clone https://github.com/peterwilli/Lightwatch.git`
+- `cd` to the cloned directory.
+- Make an alias to the Docker image for convenience: `alias lw='docker run --rm -it -v "$(pwd):/src" --privileged peterwilli/lightwatch-dev-env:latest lw'`.
+
+  - In the next steps, be sure to run `lw` in this repo's directory!
+
+- You can now run any of the following:
+
+  - `lw build-rust-blob` <- Builds the rust binary blob and automatically copies it over to the Arduino project.
+  - `build-arduino` <- Compiles the Arduino project
+  - `upload` <- Compiles the Arduino project, and uploads the compiled project to your device if it's plugged in. The first time you run this you will be asked to provide a path to the plugged in device. Be sure to follow the output of the upload command.
+
 - Good luck, it should run!
-- If you have any questions, you can reach me on the [Tanglehub Discord](https://discord.gg/wwnhaRas2N)
+
+  If you have any questions, you can reach me on the [Tanglehub Discord](https://discord.gg/wwnhaRas2N)

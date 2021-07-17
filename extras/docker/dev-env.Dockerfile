@@ -1,4 +1,4 @@
-FROM rust-xtensa:latest
+FROM peterwilli/rust-xtensa-esp32:latest
 MAINTAINER Peter Willemsen <peter@codebuffet.co>
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/bin sh
 ENV ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS=https://dl.espressif.com/dl/package_esp32_index.json
