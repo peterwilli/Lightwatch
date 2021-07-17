@@ -43,8 +43,7 @@ RUN echo "Test demo project" && \
 	git clone https://github.com/MabezDev/xtensa-rust-quickstart.git && \
 	cd xtensa-rust-quickstart && \
 	git reset --hard cafc61a544e881960335365677911fe9ac9169ae && \
-	rm -rf .git
-RUN cd xtensa-rust-quickstart && \
 	cargo xbuild --features="xtensa-lx-rt/lx6,xtensa-lx/lx6,esp32-hal" && \
+	rm -rf $BUILD_DIR/test_app && \
 	echo "End Test demo project"
 WORKDIR /app
