@@ -15,7 +15,7 @@ use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
-static test: bool = false;
+static test: bool = true;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
