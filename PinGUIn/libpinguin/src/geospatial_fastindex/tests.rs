@@ -45,12 +45,22 @@ mod tests {
             },
             3,
         );
+        fastindex.add(
+            &Rect::<u8> {
+                x: 2,
+                y: 0,
+                w: 10,
+                h: 10,
+            },
+            4,
+        );
         let result = fastindex.find(&Rect {
             x: 1,
             y: 5,
             w: 1,
             h: 1,
         });
+        assert_eq!(result.len(), 3);
         assert_eq!(result[0], 1);
         assert_eq!(result[1], 2);
         assert_eq!(result[2], 3);

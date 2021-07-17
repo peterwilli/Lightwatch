@@ -9,6 +9,11 @@ use crate::println;
 use std::prelude::v1::*;
 use std::collections::HashMap;
 
+struct ObjectHolder<T: GuiNumber, O> {
+    rect: Rect<T>,
+    object: O
+}
+
 pub struct GeoSpatialFastIndex<
     T: GuiNumber,
     G: GuiNumber,
@@ -18,7 +23,7 @@ pub struct GeoSpatialFastIndex<
     pub tile_height: T,
     pub grid_width: G,
     pub grid_height: G,
-    pub grid: HashMap<(G, G), Vec<O>>,
+    pub grid: HashMap<(G, G), Vec<ObjectHolder<T, O>>>,
 }
 
 impl<
@@ -65,7 +70,11 @@ impl<
                 );
                 let possible_tile = self.grid.get(&tuple);
                 if possible_tile.is_some() {
-                    items.append(&mut possible_tile.unwrap().clone());
+                    for held_object in possible_tile.unwrap() {
+                        if rect.is_inside(&held_object.rect) {
+                            items.push(held_object.object);
+                        }
+                    }
                 }
                 tile_x += T::one();
             }
@@ -93,10 +102,17 @@ impl<
                     (rect_tiles.x + tile_x).into(),
                     (rect_tiles.y + tile_y).into(),
                 );
+                let held_object = ObjectHolder {
+                    rect: Rect {
+                        x:0,
+                        y:0,w:0,h:0
+                    },
+                    object: object
+                };
                 if self.grid.contains_key(&tuple) {
-                    self.grid.get_mut(&tuple).unwrap().push(object);
+                    self.grid.get_mut(&tuple).unwrap().push(held_object);
                 } else {
-                    self.grid.insert(tuple, vec![object]);
+                    self.grid.insert(tuple, vec![held_object]);
                 }
                 tile_x += T::one();
             }

@@ -15,7 +15,7 @@ use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
-static test: bool = true;
+static test: bool = false;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
@@ -88,7 +88,7 @@ impl LucidDreamingApplication {
                     "accel: {}x{}x{} [{}]",
                     accel.x, accel.y, accel.z, accel_avg
                 ));
-                if accel_avg > 15 {
+                if accel_avg > 2 {
                     return true;
                 }
                 return false;

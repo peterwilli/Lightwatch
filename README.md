@@ -26,7 +26,7 @@ Text `like this` are commands!
 
 - Start by cloning this repo: `git clone https://github.com/peterwilli/Lightwatch.git`
 - `cd` to the cloned directory.
-- Make an alias to the Docker image for convenience: `alias lw='docker run --rm -it -v "$(pwd):/src" --privileged peterwilli/lightwatch-dev-env:latest lw'`.
+- Make an alias to the Docker image for convenience: `alias lw='docker run --rm -it -v "$(pwd):/src" -v "$(pwd)/.arduino_tmp:/tmp/arduino" --privileged peterwilli/lightwatch-dev-env:latest lw'`.
 
   - In the next steps, be sure to run `lw` in this repo's directory!
 

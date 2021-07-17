@@ -6,8 +6,15 @@ if [ "$CMD" == "build-rust-blob" ]; then
     cp target/xtensa-esp32-none-elf/debug/liblightwatch_firmware.a ../rust_blob_library/src/esp32
 fi
 if [ "$CMD" == "build-arduino" ]; then
-    ls /etc/arduino/libraries/rust_blob_library
-    arduino-cli compile --fqbn esp32:esp32:twatch /src/MainFirmware
+    arduino-cli compile --fqbn esp32:esp32:twatch --build-cache-path /tmp/arduino/cache --build-path /tmp/arduino/build /src/MainFirmware
+fi
+if [ "$CMD" == "serial-monitor" ]; then
+    if [ -v $2 ]; then
+        echo "Error: Need path to device as parameter (lw upload <path>). See list below."
+        arduino-cli board list
+        exit 0
+    fi
+    minicom -D $2 -b 115200
 fi
 if [ "$CMD" == "upload" ]; then
     if [ -v $2 ]; then
@@ -15,6 +22,6 @@ if [ "$CMD" == "upload" ]; then
         arduino-cli board list
         exit 0
     fi
-    arduino-cli compile --fqbn esp32:esp32:twatch /src/MainFirmware
-    arduino-cli upload -p $2 --fqbn esp32:esp32:twatch /src/MainFirmware
+    lw build-arduino
+    arduino-cli upload -p $2 --fqbn esp32:esp32:twatch --input-dir /tmp/arduino/build /src/MainFirmware
 fi
