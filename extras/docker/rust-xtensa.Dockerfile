@@ -35,7 +35,7 @@ RUN echo "Compiling Rust with the Xtensa patches... This is gonna take forever!"
 	# Cleaning up
 	cd $BUILD_DIR/build && rm -rf bootstrap cache tmp && \
 	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1* && \
-	tar -cf - . | xz -6 -T0 -c - > $XTENSA_RUSTC_ARCHIVE_PATH && \
+	cd $BUILD_DIR && tar -cf - . | xz -6 -T0 -c - > $XTENSA_RUSTC_ARCHIVE_PATH && \
 	rm -rf $BUILD_DIR
 
 RUN echo "Installing ESP32 tools..." && \

@@ -44,7 +44,7 @@ pub struct GuiCanvas<
 }
 
 impl<
-        T: GuiNumber + Copy + core::convert::From<T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
+        T: GuiNumber + Copy + core::convert::From<T> + std::ops::Sub<Output = T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
         G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
     > GuiCanvas<T, G>
 {
@@ -63,13 +63,19 @@ impl<
     pub fn get_pixel(&mut self, x: T, y: T, output: &mut GuiPixel) {
         let mut pixel = GuiElementPixel::new();
         let mut has_changed = false;
-        for idx in query {
+        let result = self.geospatial_fastindex.find(Rect::<T> {
+            x: x,
+            y: y,
+            w: T::one(),
+            h: T::one()
+        });
+        for idx in result {
             has_changed = true;
-            let idx = *idx.value_ref() as usize;
+            let idx = idx as usize;
             let element = &self.elements[idx];
             let bounds = element.get_bounds();
-            let local_x: u16 = (x.into() - bounds.x).try_into().unwrap();
-            let local_y: u16 = (x.into() - bounds.x).try_into().unwrap();
+            let local_x: T = (x - bounds.x).try_into().unwrap();
+            let local_y: T = (x - bounds.x).try_into().unwrap();
             element.get_pixel(local_x, local_y, &mut pixel);
             // TODO: take alpha channel into account
             output.r = pixel.r;
