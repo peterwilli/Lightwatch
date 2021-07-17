@@ -103,15 +103,8 @@ impl<
     }
 
     pub fn add_element(&mut self, element: Box<GuiElement<T>>) {
-        let rect = element.get_bounds();
-        self.geospatial_fastindex.add(rect, 0);
-        // let area = rect.to_qtree_area::<T>();
-        // let handle = self
-        //     .quadtree
-        //     .insert(area, self.elements.len().try_into().unwrap())
-        //     .expect("quadtree insert failed!");
-        // println!("handle: {}", handle);
-        // self.elements.push(element);
+        self.geospatial_fastindex.add(element.get_bounds(), self.elements.len().try_into().unwrap());
+        self.elements.push(element);
     }
 
     pub fn transform_element(&mut self, element_id: usize, new_rect: GuiRect) {

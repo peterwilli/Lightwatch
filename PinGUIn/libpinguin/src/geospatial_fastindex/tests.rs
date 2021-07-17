@@ -25,14 +25,17 @@ mod tests {
             },
             2,
         );
-        let result = fastindex.find(Rect::<u8> {
-            x: 1,
-            y: 5,
-            w: 1,
-            h: 1,
-        });
-        assert_eq!(result[0], 1);
-        assert_eq!(result[1], 2);
+        for i in 0..2 {
+            println!("Tryout {}", i);
+            let result = fastindex.find(Rect::<u8> {
+                x: 1,
+                y: 5,
+                w: 1,
+                h: 1,
+            });
+            assert_eq!(result[0], 1);
+            assert_eq!(result[1], 2);
+        }
         fastindex.add(
             &Rect::<u8> {
                 x: 0,
@@ -48,6 +51,9 @@ mod tests {
             w: 1,
             h: 1,
         });
+        for r in &result {
+            println!("r: {}", r);
+        }
         assert_eq!(result[0], 1);
         assert_eq!(result[1], 2);
         assert_eq!(result[2], 3);
