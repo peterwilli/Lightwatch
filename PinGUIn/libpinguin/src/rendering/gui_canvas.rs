@@ -44,7 +44,7 @@ pub struct GuiCanvas<
 }
 
 impl<
-        T: GuiNumber + Copy + core::convert::From<T> + std::ops::Sub<Output = T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
+        T: 'static + GuiNumber + Copy + core::convert::From<T> + std::ops::Sub<Output = T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
         G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
     > GuiCanvas<T, G>
 {
@@ -88,19 +88,18 @@ impl<
     }
 
     pub fn tap(&mut self, x: T, y: T) {
-        // let area = AreaBuilder::default()
-        //     .anchor(Point { x: x, y: y })
-        //     .dimensions((1.into(), 1.into()))
-        //     .build()
-        //     .unwrap();
-        // let mut query = self.quadtree.query(area);
-        // let button_index = query.next().expect("No element found").value_ref();
-        // let button_index = *button_index as usize;
-        // let mut button: &mut Button = self.elements[button_index]
-        //     .as_any()
-        //     .downcast_mut::<Button>()
-        //     .expect("Wasn't a label!");
-        // (button.on_tap.as_ref().unwrap())();
+        let result = self.geospatial_fastindex.find(Rect::<T> {
+            x: x,
+            y: y,
+            w: T::one(),
+            h: T::one()
+        });
+        let button_index = result[0] as usize;
+        let mut button: &mut Button<T> = self.elements[button_index]
+            .as_any()
+            .downcast_mut::<Button<T>>()
+            .expect("Wasn't a label!");
+        (button.on_tap.as_ref().unwrap())();
     }
 
     pub fn add_element(&mut self, element: Box<GuiElement<T>>) {
