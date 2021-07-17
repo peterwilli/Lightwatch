@@ -15,7 +15,7 @@ use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
-static test: bool = false;
+static test: bool = true;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
@@ -371,7 +371,7 @@ impl SystemApplication for LucidDreamingApplication {
                 enableAccelerometer();
             }
             let pre_second_end_trigger = self.vibrate_while(
-                &vec![100, 2500, 100, 250, 100, 2500],
+                &vec![100, 5000],
                 25 * 1000,
                 LDVibrationBreaker::ShakeAutoDismiss,
             );
