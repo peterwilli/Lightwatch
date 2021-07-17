@@ -11,7 +11,7 @@ use std::collections::HashMap;
 pub struct GeoSpatialFastIndex<
     T: GuiNumber,
     G: GuiNumber,
-    O: GuiNumber,
+    O,
 > {
     pub tile_width: T,
     pub tile_height: T,
@@ -23,7 +23,7 @@ pub struct GeoSpatialFastIndex<
 impl<
         T: GuiNumber + Copy + core::convert::From<T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
         G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
-        O: GuiNumber + core::clone::Clone,
+        O: core::marker::Copy,
     > GeoSpatialFastIndex<T, G, O>
 {
     pub fn new(tile_width: T, tile_height: T, grid_width: G, grid_height: G) -> Self {
@@ -62,7 +62,7 @@ impl<
                     (rect_tiles.x + tile_x).into(),
                     (rect_tiles.y + tile_y).into(),
                 );
-                items.append(&mut self.grid.get(&tuple).unwrap().clone());
+                items.append(&mut self.grid.get_mut(&tuple).unwrap());
                 tile_x += T::one();
             }
             tile_y += T::one();
@@ -89,9 +89,9 @@ impl<
                     (rect_tiles.y + tile_y).into(),
                 );
                 if self.grid.contains_key(&tuple) {
-                    self.grid.get_mut(&tuple).unwrap().push(object.clone());
+                    self.grid.get_mut(&tuple).unwrap().push(object);
                 } else {
-                    self.grid.insert(tuple, vec![object.clone()]);
+                    self.grid.insert(tuple, vec![object]);
                 }
                 tile_x += T::one();
             }

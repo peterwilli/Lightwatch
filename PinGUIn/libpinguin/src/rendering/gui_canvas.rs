@@ -115,7 +115,7 @@ impl<
     }
 
     pub fn transform_element(&mut self, element_id: usize, new_rect: GuiRect) {
-        let mut element = self.elements[element_id].as_mut();
+        // let mut element = self.elements[element_id].as_mut();
         // let area = new_rect.to_qtree_area::<T>();
         // element.transform(new_rect);
         // self.quadtree

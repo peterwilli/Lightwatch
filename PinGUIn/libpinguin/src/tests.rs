@@ -11,7 +11,6 @@ mod tests {
     use alloc::vec::Vec;
     use image::{GenericImage, GenericImageView, ImageBuffer, RgbImage};
 
-    /*
     #[test]
     fn test_gui_button() {
         let mut button = Box::new(Button::new(Rect {
@@ -24,9 +23,9 @@ mod tests {
         button.on_tap = Some(Box::new(|| {
             println!("Button tap!");
         }));
-        let mut gui_canvas = GuiCanvas::<i16, u16>::new();
+        let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         gui_canvas.add_element(button);
-        gui_canvas.tap(0, 0);
+        // gui_canvas.tap(10, 10);
     }
 
     #[test]
@@ -38,7 +37,7 @@ mod tests {
             h: 30,
         }));
         button.text = Some("Button".to_string());
-        let mut gui_canvas = GuiCanvas::<i16, u16>::new();
+        let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         gui_canvas.add_element(button);
         gui_canvas.transform_element(
             0,
@@ -61,5 +60,4 @@ mod tests {
         }
         img.save("test_gui_render.png").unwrap();
     }
-    */
 }

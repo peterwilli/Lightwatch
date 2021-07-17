@@ -35,7 +35,7 @@ mod tests {
         assert_eq!(result[1], 2);
         fastindex.add(
             &Rect::<u8> {
-                x: 5,
+                x: 0,
                 y: 0,
                 w: 10,
                 h: 10,

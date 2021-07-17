@@ -2,9 +2,6 @@ FROM debian:buster-slim
 MAINTAINER Peter Willemsen <peter@codebuffet.co>
 CMD ["bash"]
 ENV BUILD_DIR=/var/lib/build
-ENV XTENSA_RUSTC_ARCHIVE_PATH=/rust-xtensa-precompiled.tar.xz
-ENV RUSTC=$BUILD_DIR/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
-ENV RUST_BACKTRACE=1 
 WORKDIR $BUILD_DIR
 
 RUN echo "Installing dependencies" && \
@@ -13,6 +10,16 @@ RUN echo "Installing dependencies" && \
 	&& apt-get dist-upgrade -y \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN echo "Installing Rustup and Cargo..." && \
+	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh && \
+	chmod +x ./rustup.sh && \
+	./rustup.sh  --default-toolchain 1.52.0 --profile minimal -y && \ 
+	rm rustup.sh
+
+ENV XTENSA_RUSTC_ARCHIVE_PATH=/rust-xtensa-precompiled.tar.xz
+ENV RUSTC=$BUILD_DIR/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
+ENV RUST_BACKTRACE=1 
+
 RUN echo "Downloading rust-xtensa source.." && \
 	git clone https://github.com/MabezDev/rust-xtensa $BUILD_DIR/rust-xtensa && \
 	cd $BUILD_DIR/rust-xtensa && \
@@ -20,11 +27,6 @@ RUN echo "Downloading rust-xtensa source.." && \
 	git submodule update --init --recursive && \
 	rm -rf ./.git
 
-RUN echo "Installing Rustup and Cargo..." && \
-	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup.sh && \
-	chmod +x ./rustup.sh && \
-	./rustup.sh  --default-toolchain 1.52.0 --profile minimal -y && \ 
-	rm rustup.sh
 ENV PATH=$PATH:/root/.cargo/bin
 RUN cargo install cargo-xbuild
 
