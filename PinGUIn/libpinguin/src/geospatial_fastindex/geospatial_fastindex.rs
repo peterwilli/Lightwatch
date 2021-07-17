@@ -21,9 +21,9 @@ pub struct GeoSpatialFastIndex<
 }
 
 impl<
-        T: GuiNumber,
-        G: GuiNumber,
-        O: GuiNumber,
+        T: GuiNumber + Copy + core::convert::From<T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
+        G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
+        O: GuiNumber + core::clone::Clone,
     > GeoSpatialFastIndex<T, G, O>
 {
     pub fn new(tile_width: T, tile_height: T, grid_width: G, grid_height: G) -> Self {
@@ -70,9 +70,7 @@ impl<
         return items;
     }
 
-    pub fn add(&mut self, rect: Rect<T>, object: O)
-    where
-        std::ops::Range<T>: Iterator,
+    pub fn add(&mut self, rect: &Rect<T>, object: O)
     {
         let rect_tiles = self.rect_to_tiles(&rect);
         let mut tile_y = T::zero();

@@ -1,7 +1,10 @@
 FROM debian:buster-slim
 MAINTAINER Peter Willemsen <peter@codebuffet.co>
 CMD ["bash"]
-ARG BUILD_DIR=/var/lib/build
+ENV BUILD_DIR=/var/lib/build
+ENV XTENSA_RUSTC_ARCHIVE_PATH=/rust-xtensa-precompiled.tar.xz
+ENV RUSTC=$BUILD_DIR/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
+ENV RUST_BACKTRACE=1 
 WORKDIR $BUILD_DIR
 
 RUN echo "Installing dependencies" && \
@@ -28,13 +31,12 @@ RUN cargo install cargo-xbuild
 RUN echo "Compiling Rust with the Xtensa patches... This is gonna take forever!" && \
 	$BUILD_DIR/rust-xtensa/configure --experimental-targets=Xtensa && \
 	$BUILD_DIR/rust-xtensa/x.py build --stage 2 && \
+	
 	# Cleaning up
 	cd $BUILD_DIR/build && rm -rf bootstrap cache tmp && \
-	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1*
-
-ENV XARGO_RUST_SRC=$BUILD_DIR/rust-xtensa/library
-ENV RUSTC=$BUILD_DIR/build/x86_64-unknown-linux-gnu/stage2/bin/rustc
-ENV RUST_BACKTRACE=1 
+	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1* && \
+	tar -cf - . | xz -6 -T0 -c - > $XTENSA_RUSTC_ARCHIVE_PATH && \
+	rm -rf $BUILD_DIR
 
 RUN echo "Installing ESP32 tools..." && \
 	wget https://github.com/espressif/crosstool-NG/releases/download/esp-2021r1/xtensa-esp32-elf-gcc8_4_0-esp-2021r1-linux-amd64.tar.gz -O extensa-esp32.tar.gz && \ 
@@ -45,10 +47,11 @@ ENV PATH=$PATH:$BUILD_DIR/xtensa-esp32-elf/bin
 
 WORKDIR $BUILD_DIR/test_app
 RUN echo "Test demo project" && \
+	mkdir -p $BUILD_DIR && cd $BUILD_DIR && tar -xf $XTENSA_RUSTC_ARCHIVE_PATH && \
 	git clone https://github.com/MabezDev/xtensa-rust-quickstart.git && \
 	cd xtensa-rust-quickstart && \
 	git reset --hard cafc61a544e881960335365677911fe9ac9169ae && \
 	cargo xbuild --features="xtensa-lx-rt/lx6,xtensa-lx/lx6,esp32-hal" && \
-	rm -rf $BUILD_DIR/test_app && \
+	rm -rf $BUILD_DIR && \
 	echo "End Test demo project"
 WORKDIR /app

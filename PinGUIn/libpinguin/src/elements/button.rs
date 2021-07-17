@@ -10,7 +10,7 @@ use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 
-pub struct Button<T: GuiNumber> {
+pub struct Button<T: GuiNumber + 'static> {
     rect: Rect<T>,
     pub text: Option<String>,
     pub font: u8,

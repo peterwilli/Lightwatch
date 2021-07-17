@@ -44,8 +44,8 @@ pub struct GuiCanvas<
 }
 
 impl<
-        T: GuiNumber,
-        G: GuiNumber,
+        T: GuiNumber + Copy + core::convert::From<T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
+        G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
     > GuiCanvas<T, G>
 {
     pub fn new(tile_width: T, tile_height: T, grid_width: G, grid_height: G) -> Self {
@@ -61,24 +61,24 @@ impl<
     }
 
     pub fn get_pixel(&mut self, x: T, y: T, output: &mut GuiPixel) {
-        // let mut pixel = GuiElementPixel::new();
-        // let mut has_changed = false;
-        // for idx in query {
-        //     has_changed = true;
-        //     let idx = *idx.value_ref() as usize;
-        //     let element = &self.elements[idx];
-        //     let bounds = element.get_bounds();
-        //     let local_x: u16 = (x.into() - bounds.x).try_into().unwrap();
-        //     let local_y: u16 = (x.into() - bounds.x).try_into().unwrap();
-        //     element.get_pixel(local_x, local_y, &mut pixel);
-        //     // TODO: take alpha channel into account
-        //     output.r = pixel.r;
-        //     output.g = pixel.g;
-        //     output.b = pixel.b;
-        // }
-        // if !has_changed {
-        //     output.reset();
-        // }
+        let mut pixel = GuiElementPixel::new();
+        let mut has_changed = false;
+        for idx in query {
+            has_changed = true;
+            let idx = *idx.value_ref() as usize;
+            let element = &self.elements[idx];
+            let bounds = element.get_bounds();
+            let local_x: u16 = (x.into() - bounds.x).try_into().unwrap();
+            let local_y: u16 = (x.into() - bounds.x).try_into().unwrap();
+            element.get_pixel(local_x, local_y, &mut pixel);
+            // TODO: take alpha channel into account
+            output.r = pixel.r;
+            output.g = pixel.g;
+            output.b = pixel.b;
+        }
+        if !has_changed {
+            output.reset();
+        }
     }
 
     pub fn tap(&mut self, x: T, y: T) {

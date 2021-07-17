@@ -3,11 +3,12 @@ mod tests {
     use crate::common::Rect;
     use crate::geospatial_fastindex::GeoSpatialFastIndex;
     use crate::println;
+    
     #[test]
     fn test_add_tile() {
         let mut fastindex = GeoSpatialFastIndex::<u8, u8, u8>::new(10, 10, 10, 10);
         fastindex.add(
-            Rect {
+            &Rect::<u8> {
                 x: 0,
                 y: 0,
                 w: 10,
@@ -16,7 +17,7 @@ mod tests {
             1,
         );
         fastindex.add(
-            Rect {
+            &Rect::<u8> {
                 x: 0,
                 y: 0,
                 w: 10,
@@ -24,7 +25,7 @@ mod tests {
             },
             2,
         );
-        let result = fastindex.find(Rect {
+        let result = fastindex.find(Rect::<u8> {
             x: 1,
             y: 5,
             w: 1,
@@ -33,7 +34,7 @@ mod tests {
         assert_eq!(result[0], 1);
         assert_eq!(result[1], 2);
         fastindex.add(
-            Rect {
+            &Rect::<u8> {
                 x: 5,
                 y: 0,
                 w: 10,

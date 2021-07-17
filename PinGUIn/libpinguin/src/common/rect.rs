@@ -10,13 +10,7 @@ pub struct Rect<T: GuiNumber> {
     pub h: T,
 }
 
-impl fmt::Display for GuiNumber {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}x{}x{}x{}", self.x, self.y, self.w, self.h)
-    }
-}
-
-impl<T: GuiNumber> fmt::Display for Rect<T> {
+impl<T: GuiNumber + fmt::Display> fmt::Display for Rect<T> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}x{}x{}x{}", self.x, self.y, self.w, self.h)
     }
