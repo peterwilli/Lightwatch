@@ -102,21 +102,16 @@ impl<
         (button.on_tap.as_ref().unwrap())();
     }
 
-    pub fn add_element(&mut self, element: Box<GuiElement<T>>) {
-        self.geospatial_fastindex.add(element.get_bounds().clone(), self.elements.len().try_into().unwrap());
+    pub fn add_element(&mut self, element: Box<GuiElement<T>>) -> u16 {
+        let element_id: u16 = self.elements.len().try_into().unwrap();
+        self.geospatial_fastindex.add(element.get_bounds().clone(), element_id);
         self.elements.push(element);
+        return element_id;
     }
 
-    pub fn transform_element(&mut self, element_id: usize, new_rect: GuiRect) {
-        // let mut element = self.elements[element_id].as_mut();
-        // let area = new_rect.to_qtree_area::<T>();
-        // element.transform(new_rect);
-        // self.quadtree
-        //     .delete_by_handle(element_id.try_into().unwrap());
-        // let handle = self
-        //     .quadtree
-        //     .insert(area, self.elements.len().try_into().unwrap())
-        //     .expect("quadtree insert failed!");
-        // println!("[transform_element] handle: {}", handle);
+    pub fn transform_element(&mut self, element_id: u16, new_rect: Rect<T>) {
+        let mut element = self.elements[element_id as usize].as_mut();
+        self.geospatial_fastindex.move_object(element_id, new_rect.clone());
+        element.transform(new_rect);
     }
 }

@@ -24,7 +24,7 @@ pub struct GeoSpatialFastIndex<
     pub grid_width: G,
     pub grid_height: G,
     pub added_objects: Vec<ObjectHolder<T, O>>,
-    pub grid: HashMap<(G, G), Vec<usize>>,
+    pub grid: HashMap<(G, G), Vec<u16>>,
 }
 
 impl<
@@ -73,7 +73,7 @@ impl<
                 let possible_tile = self.grid.get(&tuple);
                 if possible_tile.is_some() {
                     for held_object_index in possible_tile.unwrap() {
-                        let held_object = self.added_objects.get(*held_object_index).unwrap();
+                        let held_object = self.added_objects.get(*held_object_index as usize).unwrap();
                         if rect.is_inside(&held_object.rect) {
                             items.push(held_object.object);
                         }
@@ -87,18 +87,17 @@ impl<
         return items;
     }
 
-    pub fn add(&mut self, rect: Rect<T>, object: O)
+    pub fn add(&mut self, rect: Rect<T>, object: O) -> u16
     {
         let rect_tiles = self.rect_to_tiles(&rect);
-        let mut tile_y = T::zero();
         let held_object = ObjectHolder::<T, O> {
             rect: rect,
             object: object
         };
         self.added_objects.push(held_object);
-        let held_object_index = self.added_objects.len() - 1;
+        let held_object_index: u16 = (self.added_objects.len() - 1).try_into().unwrap();
 
-        //... Seriously? How to you do range loops on type generics?!
+        let mut tile_y = T::zero();
         loop {
             if tile_y > rect_tiles.h {
                 break;
@@ -121,5 +120,63 @@ impl<
             }
             tile_y += T::one();
         }
+        return held_object_index.try_into().unwrap();
+    }
+
+    pub fn move_object(&mut self, object_id: u16, new_rect: Rect<T>) {
+        let tiles_to_delete = self.rect_to_tiles(&self.added_objects
+            .get(object_id as usize)
+            .expect("no object_id in self.added_objects!")
+            .rect);
+
+        let mut tile_y = T::zero();
+        loop {
+            if tile_y > tiles_to_delete.h {
+                break;
+            }
+            let mut tile_x = T::zero();
+            loop {
+                if tile_x > tiles_to_delete.w {
+                    break;
+                }
+                let tuple = (
+                    (tiles_to_delete.x + tile_x).into(),
+                    (tiles_to_delete.y + tile_y).into(),
+                );
+                if self.grid.contains_key(&tuple) {
+                    self.grid.get_mut(&tuple).unwrap().retain(|&x| x != object_id);
+                }
+                tile_x += T::one();
+            }
+            tile_y += T::one();
+        }
+
+        let tiles_to_add = self.rect_to_tiles(&new_rect);
+        let mut tile_y = T::zero();
+        loop {
+            if tile_y > tiles_to_add.h {
+                break;
+            }
+            let mut tile_x = T::zero();
+            loop {
+                if tile_x > tiles_to_add.w {
+                    break;
+                }
+                let tuple = (
+                    (tiles_to_add.x + tile_x).into(),
+                    (tiles_to_add.y + tile_y).into(),
+                );
+                if self.grid.contains_key(&tuple) {
+                    self.grid.get_mut(&tuple).unwrap().push(object_id);
+                } else {
+                    self.grid.insert(tuple, vec![object_id]);
+                }
+                tile_x += T::one();
+            }
+            tile_y += T::one();
+        }
+
+        let held_object = self.added_objects.get_mut(object_id as usize).unwrap();
+        held_object.rect = new_rect;
     }
 }
