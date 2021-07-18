@@ -7,6 +7,7 @@ use crate::non_official_c_bindings::*;
 use crate::system_applications::system_application::*;
 use crate::utils::loop_time;
 use crate::SerialLogger;
+use crate::utils::ShakeDetector;
 use alloc::format;
 use alloc::sync::Arc;
 use alloc::vec;
@@ -15,7 +16,7 @@ use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
-static test: bool = false;
+static test: bool = true;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
@@ -79,23 +80,11 @@ impl LucidDreamingApplication {
         let vibrate_start_time = unsafe { millis() };
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
-        let check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
-            fn shake_detect() -> bool {
-                let mut accel = Accel { x: 0, y: 0, z: 0 };
-                let _x = unsafe { readAccelerometer(&mut accel) };
-                let accel_avg = ((accel.x + accel.y + accel.z) / 3);
-                SerialLogger::println(format!(
-                    "accel: {}x{}x{} [{}]",
-                    accel.x, accel.y, accel.z, accel_avg
-                ));
-                if accel_avg > 2 {
-                    return true;
-                }
-                return false;
-            }
+        let mut shake_detector = ShakeDetector::new(100);
+        let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
-                    let possible_shake_detect = shake_detect();
+                    let possible_shake_detect = shake_detector.detect();
                     if possible_shake_detect {
                         return Some(LDVibrationBreaker::Shake);
                     }
@@ -111,7 +100,7 @@ impl LucidDreamingApplication {
                     return Some(LDVibrationBreaker::Button);
                 }
             } else if matches!(breaker, LDVibrationBreaker::Shake) {
-                if shake_detect() {
+                if shake_detector.detect() {
                     return Some(LDVibrationBreaker::Shake);
                 }
             } else if matches!(breaker, LDVibrationBreaker::AutoDismiss)
