@@ -2,7 +2,7 @@ use alloc::fmt::Display;
 use std::fmt;
 use crate::common::GuiNumber;
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Rect<T: GuiNumber> {
     pub x: T,
     pub y: T,

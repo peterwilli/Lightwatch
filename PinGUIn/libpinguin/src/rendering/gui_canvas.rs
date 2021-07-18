@@ -44,7 +44,7 @@ pub struct GuiCanvas<
 }
 
 impl<
-        T: 'static + GuiNumber + Copy + core::convert::From<T> + std::ops::Sub<Output = T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
+        T: 'static + GuiNumber + core::fmt::Display + Copy + core::convert::From<T> + std::ops::Sub<Output = T> + std::ops::Div<Output = T> + num::Zero + num::One + std::cmp::PartialOrd + std::ops::AddAssign,
         G: GuiNumber + Hash + core::cmp::Eq + core::convert::From<T>,
     > GuiCanvas<T, G>
 {
@@ -103,8 +103,8 @@ impl<
     }
 
     pub fn add_element(&mut self, element: Box<GuiElement<T>>) {
-        // self.geospatial_fastindex.add(element.get_bounds().clone(), self.elements.len().try_into().unwrap());
-        // self.elements.push(element);
+        self.geospatial_fastindex.add(element.get_bounds().clone(), self.elements.len().try_into().unwrap());
+        self.elements.push(element);
     }
 
     pub fn transform_element(&mut self, element_id: usize, new_rect: GuiRect) {

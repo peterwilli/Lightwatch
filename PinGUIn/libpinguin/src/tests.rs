@@ -25,7 +25,7 @@ mod tests {
         }));
         let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         gui_canvas.add_element(button);
-        // gui_canvas.tap(10, 10);
+        gui_canvas.tap(10, 10);
     }
 
     #[test]
@@ -39,15 +39,15 @@ mod tests {
         button.text = Some("Button".to_string());
         let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         gui_canvas.add_element(button);
-        gui_canvas.transform_element(
-            0,
-            Rect {
-                x: 20,
-                y: 0,
-                w: 100,
-                h: 30,
-            },
-        );
+        // gui_canvas.transform_element(
+        //     0,
+        //     Rect {
+        //         x: 20,
+        //         y: 0,
+        //         w: 100,
+        //         h: 30,
+        //     },
+        // );
         let mut img: RgbImage = ImageBuffer::new(512, 512);
         let (width, height) = img.dimensions();
         let mut current_pixel = GuiPixel::new();

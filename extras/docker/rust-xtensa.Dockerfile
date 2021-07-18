@@ -31,8 +31,13 @@ RUN echo "Downloading rust-xtensa source.." && \
 	$BUILD_DIR/rust-xtensa/configure --experimental-targets=Xtensa && \
 	$BUILD_DIR/rust-xtensa/x.py build --stage 2
 
+RUN apt-get update && apt-get install -y tree
+
 RUN echo "Cleaning up" && \
+	tree -L 3 $BUILD_DIR && echo "2" && \
+	mv $BUILD_DIR/rust-xtensa/build $BUILD_DIR/build && \
 	rm -rf $BUILD_DIR/rust-xtensa && \
+	tree -L 3 $BUILD_DIR && \
 	cd $BUILD_DIR/build && rm -rf bootstrap cache tmp && \
 	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1* && \
 	cd $BUILD_DIR && tar -cf - . | xz -6 -T0 -c - > $XTENSA_RUSTC_ARCHIVE_PATH && \
