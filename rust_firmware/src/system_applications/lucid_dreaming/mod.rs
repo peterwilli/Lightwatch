@@ -16,7 +16,7 @@ use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
 
-static test: bool = true;
+static test: bool = false;
 
 pub struct LucidDreamingApplication {
     gui_renderer: GUIRenderer,
@@ -367,7 +367,14 @@ impl SystemApplication for LucidDreamingApplication {
             );
             if matches!(pre_second_end_trigger, LDVibrationBreaker::Shake) {
                 SerialLogger::println("Shaken, so we need to retry again".to_string());
-                let preset_mins = unsafe { getRTCDataAtIndex(1) };
+                // We also bump the second alarm with 1 minute.
+                let preset_mins = unsafe { getRTCDataAtIndex(1) } + 1;
+                unsafe {
+                    setRTCDataAtIndex(
+                        1,
+                        preset_mins
+                    );
+                }
                 unsafe {
                     setRTCDataAtIndex(0, 2);
                 }
