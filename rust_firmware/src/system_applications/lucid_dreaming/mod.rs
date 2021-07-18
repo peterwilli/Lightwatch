@@ -147,14 +147,15 @@ impl LucidDreamingApplication {
             if triggered_breaker.is_some() {
                 return triggered_breaker.unwrap();
             }
+            let divider: u8 = 10;
             for (i, pattern_piece) in pattern.iter().enumerate() {
                 if i % 2 == 0 {
-                    let pattern_piece_calculated = (pattern_piece / 100);
+                    let pattern_piece_calculated = (pattern_piece / (divider as u16));
                     for i2 in 0..pattern_piece_calculated {
                         last_vibrate_time = unsafe { millis() };
                         unsafe {
-                            vibrate(100);
-                            delay(100);
+                            vibrate(divider);
+                            delay(divider.into());
                             let triggered_breaker = check(last_vibrate_time);
                             if triggered_breaker.is_some() {
                                 return triggered_breaker.unwrap();
@@ -162,10 +163,10 @@ impl LucidDreamingApplication {
                         }
                     }
                 } else {
-                    let pattern_piece_calculated = (pattern_piece / 100);
+                    let pattern_piece_calculated = (pattern_piece / (divider as u16));
                     for i2 in 0..pattern_piece_calculated {
                         unsafe {
-                            delay(100);
+                            delay(divider.into());
                             let triggered_breaker = check(last_vibrate_time);
                             if triggered_breaker.is_some() {
                                 return triggered_breaker.unwrap();
