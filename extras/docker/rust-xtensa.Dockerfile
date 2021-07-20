@@ -28,14 +28,11 @@ RUN echo "Downloading rust-xtensa source.." && \
 	git submodule update --init --recursive && \
 	rm -rf ./.git && \
 	echo "Compiling Rust with the Xtensa patches... This is gonna take forever!" && \
+	cd $BUILD_DIR && \ 
 	$BUILD_DIR/rust-xtensa/configure --experimental-targets=Xtensa && \
-	$BUILD_DIR/rust-xtensa/x.py build --stage 2
-
-RUN apt-get update && apt-get install -y tree
-
-RUN echo "Cleaning up" && \
-	mv $BUILD_DIR/rust-xtensa/build $BUILD_DIR/build && \
-	find $BUILD_DIR/rust-xtensa/ -maxdepth 1 -not -name 'library' | sed 1d | xargs rm -rf && \
+	$BUILD_DIR/rust-xtensa/x.py build --stage 2 && \
+	echo "Cleaning up" && \
+	find $BUILD_DIR/rust-xtensa/ -maxdepth 1 -not -name 'library' -not -name 'Cargo.lock' | sed 1d | xargs rm -rf && \
 	cd $BUILD_DIR/build && rm -rf bootstrap cache tmp && \
 	cd x86_64-unknown-linux-gnu && rm -rf compiler-doc crate-docs doc md-doc stage0* stage1* && \
 	cd $BUILD_DIR && tar -cf - . | xz -6 -T0 -c - > $XTENSA_RUSTC_ARCHIVE_PATH && \
@@ -55,7 +52,6 @@ ENV RUST_BACKTRACE=1
 WORKDIR $BUILD_DIR/test_app
 RUN echo "Test demo project" && \
 	mkdir -p $BUILD_DIR && cd $BUILD_DIR && tar -xf $XTENSA_RUSTC_ARCHIVE_PATH && \
-	tree -L 2 $BUILD_DIR && \ 
 	git clone https://github.com/MabezDev/xtensa-rust-quickstart.git && \
 	cd xtensa-rust-quickstart && \
 	git reset --hard cafc61a544e881960335365677911fe9ac9169ae && \

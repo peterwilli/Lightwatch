@@ -16,7 +16,7 @@ pub struct Button<T: GuiNumber + 'static> {
     pub font: u8,
     pub on_tap: Option<Box<dyn Fn()>>,
     pub is_pressed: bool,
-    needs_redraw: Option<Arc<Mutex<bool>>>,
+    needs_redraw: bool,
 }
 
 impl<T: GuiNumber> GuiElement<T> for Button<T> {
@@ -27,7 +27,7 @@ impl<T: GuiNumber> GuiElement<T> for Button<T> {
             font: 1,
             is_pressed: false,
             on_tap: None,
-            needs_redraw: None,
+            needs_redraw: true,
         };
     }
 
@@ -41,6 +41,10 @@ impl<T: GuiNumber> GuiElement<T> for Button<T> {
 
     fn is_inside(&self, x: T, y: T) -> bool {
         return true;
+    }
+
+    fn needs_redraw(&self) -> bool {
+        return self.needs_redraw;
     }
 
     fn get_pixel(&self, x: T, y: T, output: &mut GuiElementPixel) {
