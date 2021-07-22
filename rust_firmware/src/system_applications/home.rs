@@ -1,9 +1,10 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
 use crate::gui::*;
-use crate::system_applications::system_application::*;
 
+use crate::system_applications::system_application::*;
 use crate::system_applications::LucidDreamingApplication;
+use crate::system_applications::PinguinTestApplication;
 
 use alloc::vec;
 
@@ -73,7 +74,7 @@ impl SystemApplication for HomeScreenApplication {
             let mut button = Box::new(Button::new(10, 30, 100, 100));
             button.text = Some("Button".to_string());
             button.on_tap = Some(Box::new(|| {
-                launch_app(Box::new(LucidDreamingApplication::new()));
+                launch_app(Box::new(PinguinTestApplication::new()));
             }));
             self.gui_renderer.elements.push(label);
             self.gui_renderer.elements.push(button);

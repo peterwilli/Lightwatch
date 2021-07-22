@@ -3,8 +3,8 @@
 extern crate alloc;
 extern crate no_std_compat as std;
 
-mod common;
-mod elements;
+pub mod common;
+pub mod elements;
 mod geospatial_fastindex;
 pub mod rendering;
 mod tests;
