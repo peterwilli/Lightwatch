@@ -9,6 +9,7 @@ use alloc::string::String;
 use alloc::sync::Arc;
 use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
+use core::fmt::Display;
 use no_std_compat::sync::Mutex;
 use core::convert::TryInto;
 
@@ -21,13 +22,13 @@ pub struct Button<T: GuiNumber + 'static> {
     needs_redraw: bool,
 }
 
-impl<T: GuiNumber> Button<T> {
+impl<T: GuiNumber + num::Zero + Display + Copy + TryInto<usize>> Button<T> where T::Error: std::fmt::Debug  {
     pub fn set_text(&mut self, text: String) {
-        // self.label.text = Some(text);
+        self.label.set_text(text);
     }
 }
 
-impl<T: GuiNumber + num::Zero + Copy + TryInto<usize>> GuiElement<T> for Button<T> where T::Error: std::fmt::Debug {
+impl<T: GuiNumber + num::Zero + Display + Copy + TryInto<usize>> GuiElement<T> for Button<T> where T::Error: std::fmt::Debug {
     fn new(rect: Rect<T>) -> Self {
         let rect_clone = rect.clone();
         return Button {
@@ -54,6 +55,8 @@ impl<T: GuiNumber + num::Zero + Copy + TryInto<usize>> GuiElement<T> for Button<
 
     fn get_pixel(&mut self, x: T, y: T, output: &mut GuiElementPixel) {
         output.r = 255;
+        self.label.get_pixel(x, y, output);
+        output.g = output.a;
     }
 
     fn r#loop(&mut self) {}

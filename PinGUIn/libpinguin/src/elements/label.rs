@@ -6,26 +6,34 @@ use crate::elements::GuiRect;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
 use alloc::sync::Arc;
+use alloc::vec::Vec;
 use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 use crate::rendering::FontRenderer;
 use crate::alloc::string::ToString;
 use core::convert::TryInto;
+use core::fmt::Display;
 
 pub struct Label<T: GuiNumber + 'static> {
     rect: Rect<T>,
-    pub text: Option<String>,
+    chars: Option<Vec<char>>,
     pub font: u8,
     needs_redraw: bool,
     font_renderer: FontRenderer<T>
 }
 
-impl<T: GuiNumber + num::Zero + TryInto<usize>> GuiElement<T> for Label<T> where T::Error: std::fmt::Debug {
+impl<T: GuiNumber + Copy + Display + num::Zero + TryInto<usize>> Label<T> where T::Error: std::fmt::Debug {
+    pub fn set_text(&mut self, text: String) {
+        self.chars = Some(text.chars().collect());
+    }
+}
+
+impl<T: GuiNumber + Copy + Display + num::Zero + TryInto<usize>> GuiElement<T> for Label<T> where T::Error: std::fmt::Debug {
     fn new(rect: Rect<T>) -> Self {
         return Label {
             rect: rect,
-            text: None,
+            chars: None,
             font: 1,
             needs_redraw: true,
             font_renderer: FontRenderer::new()
@@ -45,7 +53,12 @@ impl<T: GuiNumber + num::Zero + TryInto<usize>> GuiElement<T> for Label<T> where
     }
 
     fn get_pixel(&mut self, x: T, y: T, output: &mut GuiElementPixel) {
-        // self.font_renderer.pixel_for_letter(self.text.as_ref().unwrap().chars().next().unwrap(), "test".to_string(), 20.0, x, y, output);
+        if self.chars.is_some() {
+            let idx: usize = x.try_into().unwrap() / 10;
+            if idx < self.chars.as_ref().unwrap().len() {
+                self.font_renderer.pixel_for_letter(self.chars.as_ref().unwrap()[idx], "test".to_string(), 20.0, x, y, output);
+            }
+        }
     }
 
     fn r#loop(&mut self) {}

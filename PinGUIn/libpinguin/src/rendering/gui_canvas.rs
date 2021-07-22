@@ -75,7 +75,7 @@ impl<
             let element = &mut self.elements[idx];
             let bounds = element.get_bounds();
             let local_x: T = (x - bounds.x).try_into().unwrap();
-            let local_y: T = (x - bounds.x).try_into().unwrap();
+            let local_y: T = (y - bounds.y).try_into().unwrap();
             element.get_pixel(local_x, local_y, &mut pixel);
             // TODO: take alpha channel into account
             output.r = pixel.r;
