@@ -19,7 +19,7 @@ mod tests {
             w: 100,
             h: 30,
         }));
-        button.text = Some("Button".to_string());
+        button.set_text("Button".to_string());
         button.on_tap = Some(Box::new(|| {
             println!("Button tap!");
         }));
@@ -36,7 +36,7 @@ mod tests {
             w: 100,
             h: 30,
         }));
-        button.text = Some("Button".to_string());
+        button.set_text("Button".to_string());
         let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         let button_id = gui_canvas.add_element(button);
         gui_canvas.transform_element(

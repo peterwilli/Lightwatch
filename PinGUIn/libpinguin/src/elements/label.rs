@@ -3,39 +3,31 @@ use crate::common::Rect;
 use crate::elements::GuiElement;
 use crate::elements::GuiElementPixel;
 use crate::elements::GuiRect;
-use crate::elements::Label;
 use alloc::prelude::v1::Box;
 use alloc::string::String;
 use alloc::sync::Arc;
 use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
+use crate::rendering::FontRenderer;
+use crate::alloc::string::ToString;
 
-pub struct Button<T: GuiNumber + 'static> {
+pub struct Label<T: GuiNumber + 'static> {
     rect: Rect<T>,
-    pub label: Label<T>,
+    pub text: Option<String>,
     pub font: u8,
-    pub on_tap: Option<Box<dyn Fn()>>,
-    pub is_pressed: bool,
     needs_redraw: bool,
+    font_renderer: FontRenderer<T>
 }
 
-impl<T: GuiNumber> Button<T> {
-    pub fn set_text(&mut self, text: String) {
-        // self.label.text = Some(text);
-    }
-}
-
-impl<T: GuiNumber + num::Zero + Copy> GuiElement<T> for Button<T> {
+impl<T: GuiNumber + num::Zero> GuiElement<T> for Label<T> {
     fn new(rect: Rect<T>) -> Self {
-        let rect_clone = rect.clone();
-        return Button {
+        return Label {
             rect: rect,
-            label: Label::new(rect_clone),
+            text: None,
             font: 1,
-            is_pressed: false,
-            on_tap: None,
             needs_redraw: true,
+            font_renderer: FontRenderer::<T>::new()
         };
     }
 
@@ -52,7 +44,7 @@ impl<T: GuiNumber + num::Zero + Copy> GuiElement<T> for Button<T> {
     }
 
     fn get_pixel(&mut self, x: T, y: T, output: &mut GuiElementPixel) {
-        output.r = 255;
+        self.font_renderer.pixel_for_letter(self.text.as_ref().unwrap().chars().next().unwrap(), "test".to_string(), 20.0, x, y, output);
     }
 
     fn r#loop(&mut self) {}

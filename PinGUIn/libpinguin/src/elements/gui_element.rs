@@ -31,6 +31,6 @@ where
     fn r#loop(&mut self);
     fn get_bounds(&self) -> &Rect<T>;
     fn is_inside(&self, x: T, y: T) -> bool;
-    fn get_pixel(&self, x: T, y: T, output: &mut GuiElementPixel);
+    fn get_pixel(&mut self, x: T, y: T, output: &mut GuiElementPixel);
     fn as_any(&mut self) -> &mut dyn Any;
 }
