@@ -9,7 +9,7 @@ pub struct FontRenderer<T: GuiNumber> {
     phantom: T
 }
 
-impl<T: GuiNumber + num::Zero + core::convert::TryInto<usize>> FontRenderer<T> {
+impl<T: GuiNumber + num::Zero + core::convert::TryInto<usize>> FontRenderer<T> where T::Error: std::fmt::Debug {
     pub fn new() -> Self {
         return FontRenderer {
             fonts: HashMap::new(),

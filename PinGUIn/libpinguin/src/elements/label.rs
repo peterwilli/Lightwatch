@@ -11,6 +11,7 @@ use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
 use crate::rendering::FontRenderer;
 use crate::alloc::string::ToString;
+use core::convert::TryInto;
 
 pub struct Label<T: GuiNumber + 'static> {
     rect: Rect<T>,
@@ -20,14 +21,14 @@ pub struct Label<T: GuiNumber + 'static> {
     font_renderer: FontRenderer<T>
 }
 
-impl<T: GuiNumber + num::Zero> GuiElement<T> for Label<T> {
+impl<T: GuiNumber + num::Zero + TryInto<usize>> GuiElement<T> for Label<T> where T::Error: std::fmt::Debug {
     fn new(rect: Rect<T>) -> Self {
         return Label {
             rect: rect,
             text: None,
             font: 1,
             needs_redraw: true,
-            font_renderer: FontRenderer::<T>::new()
+            font_renderer: FontRenderer::new()
         };
     }
 
@@ -44,7 +45,7 @@ impl<T: GuiNumber + num::Zero> GuiElement<T> for Label<T> {
     }
 
     fn get_pixel(&mut self, x: T, y: T, output: &mut GuiElementPixel) {
-        self.font_renderer.pixel_for_letter(self.text.as_ref().unwrap().chars().next().unwrap(), "test".to_string(), 20.0, x, y, output);
+        // self.font_renderer.pixel_for_letter(self.text.as_ref().unwrap().chars().next().unwrap(), "test".to_string(), 20.0, x, y, output);
     }
 
     fn r#loop(&mut self) {}

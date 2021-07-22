@@ -5,4 +5,4 @@ use core::convert::TryInto;
 
 pub trait GuiNumber {}
 
-impl<T: num::PrimInt + AddAssign + PartialOrd<T> + TryInto<usize> + Div<T> + std::ops::Div<Output = T> + Default> GuiNumber for T {}
+impl<T: num::PrimInt + AddAssign + PartialOrd<T> + TryInto<usize> + Div<T> + std::ops::Div<Output = T> + Default> GuiNumber for T where T::Error: std::fmt::Debug {}

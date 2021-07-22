@@ -10,6 +10,7 @@ use alloc::sync::Arc;
 use core::any::Any;
 use core::ops::{AddAssign, Div, Sub};
 use no_std_compat::sync::Mutex;
+use core::convert::TryInto;
 
 pub struct Button<T: GuiNumber + 'static> {
     rect: Rect<T>,
@@ -26,7 +27,7 @@ impl<T: GuiNumber> Button<T> {
     }
 }
 
-impl<T: GuiNumber + num::Zero + Copy> GuiElement<T> for Button<T> {
+impl<T: GuiNumber + num::Zero + Copy + TryInto<usize>> GuiElement<T> for Button<T> where T::Error: std::fmt::Debug {
     fn new(rect: Rect<T>) -> Self {
         let rect_clone = rect.clone();
         return Button {
