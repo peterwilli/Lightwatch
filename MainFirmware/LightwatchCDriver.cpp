@@ -5,9 +5,14 @@ TTGOClass *ttgo;
 bool irq = false;
 RTC_DATA_ATTR uint8_t RTC_DATA[1024] = {0};
 #define uS_TO_mS_FACTOR 1000  /* Conversion factor for micro seconds to miliseconds */
+#define COLOR565(r,g,b)  ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
 
 uint8_t getRTCDataAtIndex(uint16_t index) {
   return RTC_DATA[index];
+}
+
+uint16_t color565(uint8_t r, uint8_t g, uint8_t b) {
+  return COLOR565(r, g, b);
 }
 
 void setRTCDataAtIndex(uint16_t index, uint8_t data) {
@@ -74,6 +79,22 @@ void fillScreen(uint16_t color) {
 
 void fillRect(int32_t x, int32_t y, int32_t w, int32_t h, uint32_t color) {
   ttgo->tft->fillRect(x, y, w, h, color);
+}
+
+void tft_pushColor(uint16_t color) {
+  ttgo->tft->pushColor(color);
+}
+
+void tft_setAddrWindow(int32_t x0, int32_t y0, int32_t w, int32_t h) {
+  ttgo->tft->setAddrWindow(x0, y0, w, h);
+}
+
+void tft_startWrite() {
+  ttgo->tft->startWrite();
+}
+
+void tft_endWrite() {
+  ttgo->tft->endWrite();
 }
 
 void setTextColor(uint16_t c) {

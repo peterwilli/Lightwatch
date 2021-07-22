@@ -8,6 +8,9 @@ if [ "$CMD" == "build-rust-blob" ]; then
     cd /src/rust_firmware && cargo xbuild --features="xtensa-lx-rt/lx6,xtensa-lx/lx6,esp32-hal"
     cp target/xtensa-esp32-none-elf/debug/liblightwatch_firmware.a ../rust_blob_library/src/esp32
 fi
+if [ "$CMD" == "make-rust-bindings" ]; then
+    cd /src/rust_firmware && ./make_bindings
+fi
 if [ "$CMD" == "build-arduino" ]; then
     arduino-cli compile --fqbn esp32:esp32:twatch --build-cache-path /tmp/arduino/cache --build-path /tmp/arduino/build /src/MainFirmware
 fi

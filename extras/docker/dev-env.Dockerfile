@@ -3,8 +3,14 @@ MAINTAINER Peter Willemsen <peter@codebuffet.co>
 
 RUN echo "Installing dependencies" && \
 	apt-get update  \
-	&& apt-get install -y --no-install-recommends minicom  \
+	&& apt-get install -y --no-install-recommends minicom libclang-dev  \
 	&& rm -rf /var/lib/apt/lists/*
+
+RUN echo "Installing Rust (Cargo) dependencies..." && \
+	mkdir -p $BUILD_DIR && cd $BUILD_DIR && tar -xf $XTENSA_RUSTC_ARCHIVE_PATH && \
+	cargo install --version 0.58.1 bindgen && \
+	rustup component add rustfmt && \
+	rm -rf $BUILD_DIR
 
 RUN curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | BINDIR=/usr/bin sh
 ENV ARDUINO_BOARD_MANAGER_ADDITIONAL_URLS=https://dl.espressif.com/dl/package_esp32_index.json
@@ -23,4 +29,5 @@ RUN cd /etc/arduino/libraries && \
 	wget https://github.com/Xinyuan-LilyGO/TTGO_TWatch_Library/archive/refs/tags/V1.4.2.tar.gz -O TTWatch_Lib.tar.gz && \
 	tar -xvf TTWatch_Lib.tar.gz && \
 	rm TTWatch_Lib.tar.gz
+
 ADD ./lw /usr/bin

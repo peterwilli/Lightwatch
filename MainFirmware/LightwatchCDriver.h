@@ -30,6 +30,9 @@ extern "C" {
     void getScreenSize(uint16_t &w, uint16_t &h);
     uint8_t readIRQ();
 
+    // Utils
+    uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
+
     // Pin numbers (Idk how else to do this)
     uint8_t getPinAXP202();
         
@@ -54,6 +57,11 @@ extern "C" {
     void setTextDatum(uint8_t datum);
     void drawLine(int32_t xs, int32_t ys, int32_t xe, int32_t ye, uint32_t color);         
     void pushImage(int32_t x0, int32_t y0, int32_t w, int32_t h, uint16_t *data);
+
+    void tft_setAddrWindow(int32_t x0, int32_t y0, int32_t w, int32_t h);
+    void tft_startWrite();
+    void tft_endWrite();
+    void tft_pushColor(uint16_t color);
     //End Drawing
 
     uint8_t getTouch(int16_t &x, int16_t &y);

@@ -11,14 +11,19 @@ use libpinguin::elements::Button;
 use libpinguin::common::Rect;
 use libpinguin::elements::GuiElement;
 use libpinguin::rendering::GuiCanvas;
+use crate::pinguin_renderer::PinguinRenderer;
 
 pub struct PinguinTestApplication {
+    renderer: PinguinRenderer,
+    gui_canvas: GuiCanvas<i16, i16>
 }
 
 impl SystemApplication for PinguinTestApplication {
     fn new() -> Self {
         return {
             PinguinTestApplication {
+                renderer: PinguinRenderer::new(),
+                gui_canvas: GuiCanvas::<i16, i16>::new(10, 10, 25, 25)
             }
         };
     }
@@ -36,7 +41,6 @@ impl SystemApplication for PinguinTestApplication {
         unsafe {
             fillScreen(0);
         }
-        let mut gui_canvas = GuiCanvas::<i16, i16>::new(10, 10, 10, 10);
         let mut button = Box::new(Button::new(Rect {
             x: 0,
             y: 0,
@@ -47,9 +51,10 @@ impl SystemApplication for PinguinTestApplication {
         button.on_tap = Some(Box::new(|| {
             SerialLogger::println("Button tap!".to_string());
         }));
+        self.gui_canvas.add_element(button);
     }
 
     fn r#loop(&mut self) {
-        
+        self.renderer.r#loop(&self.gui_canvas);
     }
 }
