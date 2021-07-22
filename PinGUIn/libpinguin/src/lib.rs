@@ -6,6 +6,6 @@ extern crate no_std_compat as std;
 mod common;
 mod elements;
 mod geospatial_fastindex;
-mod rendering;
+pub mod rendering;
 mod tests;
 mod utils;

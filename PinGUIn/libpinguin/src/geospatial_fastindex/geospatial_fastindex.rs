@@ -53,7 +53,7 @@ impl<
         };
     }
 
-    pub fn find(&mut self, rect: &Rect<T>) -> Vec<O> {
+    pub fn find(&self, rect: &Rect<T>) -> Vec<O> {
         let rect_tiles = self.rect_to_tiles(rect);
         let mut tile_y = T::zero();
         let mut items: Vec<O> = vec![];

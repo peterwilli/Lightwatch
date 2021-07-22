@@ -43,10 +43,6 @@ impl<T: GuiNumber> GuiElement<T> for Button<T> {
         return true;
     }
 
-    fn needs_redraw(&self) -> bool {
-        return self.needs_redraw;
-    }
-
     fn get_pixel(&self, x: T, y: T, output: &mut GuiElementPixel) {
         output.r = 255;
     }

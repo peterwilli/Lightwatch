@@ -60,7 +60,7 @@ impl<
         };
     }
 
-    pub fn get_pixel(&mut self, x: T, y: T, output: &mut GuiPixel) {
+    pub fn get_pixel(&self, x: T, y: T, output: &mut GuiPixel) {
         let mut pixel = GuiElementPixel::new();
         let mut has_changed = false;
         let result = self.geospatial_fastindex.find(&Rect::<T> {

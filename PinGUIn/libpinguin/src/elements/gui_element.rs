@@ -24,14 +24,13 @@ pub trait GuiElement<T>
 where
     T: GuiNumber,
 {
-    fn new(r: Rect<T>) -> Self
+    fn new(rect: Rect<T>) -> Self
     where
         Self: Sized;
     fn transform(&mut self, new_rect: Rect<T>);
     fn r#loop(&mut self);
     fn get_bounds(&self) -> &Rect<T>;
     fn is_inside(&self, x: T, y: T) -> bool;
-    fn needs_redraw(&self) -> bool;
     fn get_pixel(&self, x: T, y: T, output: &mut GuiElementPixel);
     fn as_any(&mut self) -> &mut dyn Any;
 }

@@ -11,6 +11,7 @@ mod libc_alloc;
 use libc_alloc::*;
 mod utils;
 use utils::SerialLogger;
+mod pinguin_renderer;
 mod c_bindings;
 use c_bindings::*;
 mod non_official_c_bindings;
