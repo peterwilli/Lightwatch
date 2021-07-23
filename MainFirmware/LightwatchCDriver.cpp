@@ -3,6 +3,7 @@
 
 TTGOClass *ttgo;
 bool irq = false;
+bool rtcIrq = false;
 RTC_DATA_ATTR uint8_t RTC_DATA[1024] = {0};
 #define uS_TO_mS_FACTOR 1000  /* Conversion factor for micro seconds to miliseconds */
 #define COLOR565(r,g,b)  ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)
@@ -43,6 +44,32 @@ void deepSleep(uint32_t sleepMillis) {
 
   esp_sleep_enable_timer_wakeup(((uint64_t) sleepMillis) * uS_TO_mS_FACTOR);
   esp_deep_sleep_start();
+}
+
+void rtc_getDateTime(RTCDate &rtcDate) {
+  RTC_Date curr_datetime = ttgo->rtc->getDateTime();
+  rtcDate.year = curr_datetime.year;
+  rtcDate.month = curr_datetime.month;
+  rtcDate.day = curr_datetime.day;
+  rtcDate.hour = curr_datetime.hour;
+  rtcDate.minute = curr_datetime.minute;
+  rtcDate.second = curr_datetime.second;
+}
+
+void rtc_setDateTime(uint16_t year,
+                     uint8_t month,
+                     uint8_t day,
+                     uint8_t hour,
+                     uint8_t minute,
+                     uint8_t second) {
+  ttgo->rtc->setDateTime(year, month, day, hour, minute, second);
+}
+
+void enableRTC() {
+  pinMode(RTC_INT_PIN, INPUT_PULLUP);
+  attachInterrupt(RTC_INT_PIN, [] {
+      rtcIrq = 1;
+  }, FALLING);
 }
 
 void enableVibrator() {

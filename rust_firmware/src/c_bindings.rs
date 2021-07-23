@@ -15,7 +15,6 @@ pub type int_least8_t = i8;
 pub type uint_least8_t = u8;
 pub type int_fast8_t = i8;
 pub type uint_fast8_t = u8;
-
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct bma4_accel {
@@ -70,6 +69,90 @@ fn bindgen_test_layout_bma4_accel() {
     );
 }
 pub type Accel = bma4_accel;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct rtc_date {
+    pub year: u16,
+    pub month: u8,
+    pub day: u8,
+    pub hour: u8,
+    pub minute: u8,
+    pub second: u8,
+}
+#[test]
+fn bindgen_test_layout_rtc_date() {
+    assert_eq!(
+        ::core::mem::size_of::<rtc_date>(),
+        8usize,
+        concat!("Size of: ", stringify!(rtc_date))
+    );
+    assert_eq!(
+        ::core::mem::align_of::<rtc_date>(),
+        2usize,
+        concat!("Alignment of ", stringify!(rtc_date))
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).year as *const _ as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(year)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).month as *const _ as usize },
+        2usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(month)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).day as *const _ as usize },
+        3usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(day)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).hour as *const _ as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(hour)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).minute as *const _ as usize },
+        5usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(minute)
+        )
+    );
+    assert_eq!(
+        unsafe { &(*(::core::ptr::null::<rtc_date>())).second as *const _ as usize },
+        6usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(rtc_date),
+            "::",
+            stringify!(second)
+        )
+    );
+}
+pub type RTCDate = rtc_date;
 extern "C" {
     pub fn enableAccelerometer();
 }
@@ -99,6 +182,15 @@ extern "C" {
 }
 extern "C" {
     pub fn enableVibrator();
+}
+extern "C" {
+    pub fn enableRTC();
+}
+extern "C" {
+    pub fn rtc_setDateTime(year: u16, month: u8, day: u8, hour: u8, minute: u8, second: u8);
+}
+extern "C" {
+    pub fn rtc_getDateTime(rtcDate: *mut RTCDate);
 }
 extern "C" {
     pub fn displaySleep();

@@ -19,6 +19,16 @@ struct bma4_accel {
 typedef struct bma4_accel Accel;
 #endif // end Arduino
 
+struct rtc_date {
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t second;
+};
+typedef struct rtc_date RTCDate;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -39,6 +49,17 @@ extern "C" {
     // Vibrator
     void vibrate(uint8_t duration);
     void enableVibrator();
+
+    // RTC
+    void enableRTC();
+    void rtc_setDateTime(uint16_t year,
+                     uint8_t month,
+                     uint8_t day,
+                     uint8_t hour,
+                     uint8_t minute,
+                     uint8_t second);
+    void rtc_getDateTime(RTCDate &rtcDate);
+    
     
     // Power management
     void displaySleep();
