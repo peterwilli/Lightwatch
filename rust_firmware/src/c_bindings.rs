@@ -172,6 +172,12 @@ extern "C" {
     pub fn readIRQ() -> u8;
 }
 extern "C" {
+    pub fn getStepCount() -> u32;
+}
+extern "C" {
+    pub fn enableStepCounter();
+}
+extern "C" {
     pub fn color565(r: u8, g: u8, b: u8) -> u16;
 }
 extern "C" {

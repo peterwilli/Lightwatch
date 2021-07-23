@@ -40,6 +40,10 @@ extern "C" {
     void getScreenSize(uint16_t &w, uint16_t &h);
     uint8_t readIRQ();
 
+    // Step counter
+    uint32_t getStepCount();
+    void enableStepCounter();
+
     // Utils
     uint16_t color565(uint8_t r, uint8_t g, uint8_t b);
 

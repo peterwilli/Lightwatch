@@ -3,6 +3,7 @@
 
 TTGOClass *ttgo;
 bool irq = false;
+bool bma423Irq = false; 
 bool rtcIrq = false;
 RTC_DATA_ATTR uint8_t RTC_DATA[1024] = {0};
 #define uS_TO_mS_FACTOR 1000  /* Conversion factor for micro seconds to miliseconds */
@@ -193,9 +194,25 @@ void enableAccelerometer() {
       - BMA4_CONTINUOUS_MODE
   */
   cfg.perf_mode = BMA4_CONTINUOUS_MODE;
-  
+
+  pinMode(BMA423_INT1, INPUT);
+  attachInterrupt(BMA423_INT1, [] {
+      // Set interrupt to set irq value to 1
+      bma423Irq = 1;
+  }, RISING); //It must be a rising edge
+
   ttgo->bma->accelConfig(cfg);
   ttgo->bma->enableAccel();
+}
+
+void enableStepCounter() {
+  // Enable BMA423 step count feature
+  ttgo->bma->enableFeature(BMA423_STEP_CNTR, true);
+  ttgo->bma->resetStepCounter();
+}
+
+uint32_t getStepCount() {
+  return ttgo->bma->getCounter();   
 }
 
 void getScreenSize(uint16_t &w, uint16_t &h) {
