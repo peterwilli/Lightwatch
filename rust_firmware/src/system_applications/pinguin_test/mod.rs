@@ -5,6 +5,7 @@ use crate::utils::loop_time;
 use crate::SerialLogger;
 use alloc::format;
 use alloc::vec;
+use crate::non_official_c_bindings::*;
 use std::prelude::v1::*;
 use alloc::prelude::v1::Box;
 use libpinguin::elements::Button;
@@ -47,7 +48,7 @@ impl SystemApplication for PinguinTestApplication {
             w: 100,
             h: 30,
         }));
-        button.text = Some("Button".to_string());
+        button.set_text("text".to_string());
         button.on_tap = Some(Box::new(|| {
             SerialLogger::println("Button tap!".to_string());
         }));
@@ -55,6 +56,7 @@ impl SystemApplication for PinguinTestApplication {
     }
 
     fn r#loop(&mut self) {
-        self.renderer.r#loop(&self.gui_canvas);
+        self.renderer.r#loop(&mut self.gui_canvas);
+        unsafe {delay(1000);}
     }
 }

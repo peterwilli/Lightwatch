@@ -1,5 +1,6 @@
 #include <lightwatch_rust_blob.h>
 #include "LightwatchCDriver.h"
+#include <math.h>
 
 void screenTest() {
     Serial.println("R");
@@ -15,6 +16,7 @@ void screenTest() {
 
 void setup()
 {
+    fminf(2, 3);
     Serial.begin(115200);
     initLightwatchCDriver();
 //    screenTest();
