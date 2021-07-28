@@ -9,9 +9,11 @@ use crate::utils::loop_time;
 use crate::SerialLogger;
 use crate::utils::ShakeDetector;
 use alloc::format;
+use std::cmp;
 use alloc::sync::Arc;
 use alloc::vec;
 use core::ffi::c_void;
+use core::convert::TryInto;
 use cstr_core::CString;
 use no_std_compat::sync::Mutex;
 use std::prelude::v1::*;
@@ -80,7 +82,7 @@ impl LucidDreamingApplication {
         let vibrate_start_time = unsafe { millis() };
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
-        let mut shake_detector = ShakeDetector::new(100);
+        let mut shake_detector = ShakeDetector::new(80);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
@@ -368,7 +370,10 @@ impl SystemApplication for LucidDreamingApplication {
             if matches!(pre_second_end_trigger, LDVibrationBreaker::Shake) {
                 SerialLogger::println("Shaken, so we need to retry again".to_string());
                 // We also bump the second alarm with 1 minute.
-                let preset_mins = unsafe { getRTCDataAtIndex(1) } + 1;
+                let current_mins = unsafe { getRTCDataAtIndex(1) };
+                let to_add_mins: u8 = cmp::max(1, (current_mins + 1) / 2);
+                let preset_mins = unsafe { getRTCDataAtIndex(1) } + to_add_mins;
+                SerialLogger::println(format!("current_mins: {} new preset_mins: {} to_add_mins: {}", current_mins, preset_mins, to_add_mins));
                 unsafe {
                     setRTCDataAtIndex(
                         1,

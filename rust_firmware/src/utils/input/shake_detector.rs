@@ -13,7 +13,7 @@ impl ShakeDetector {
         return ShakeDetector {
             last_accel: Accel { x: 0, y: 0, z: 0 },
             treshold: treshold,
-            delay: 5
+            delay: 50
         };
     }
 

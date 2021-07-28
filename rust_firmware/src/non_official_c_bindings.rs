@@ -4,5 +4,6 @@ extern "C" {
     pub fn digitalRead(pinNum: u8) -> u8;
     pub fn esp_random() -> u32;
     pub fn begin_tft_write();
+    pub fn ceil(num: f64) -> f64;
     pub fn end_tft_write();
 }
