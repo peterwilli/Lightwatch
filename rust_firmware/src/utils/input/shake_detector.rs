@@ -4,12 +4,12 @@ use crate::c_bindings::*;
 
 pub struct ShakeDetector {
     last_accel: Accel,
-    treshold: u8,
+    treshold: i16,
     delay: u8
 }
 
 impl ShakeDetector {
-    pub fn new(treshold: u8) -> Self {
+    pub fn new(treshold: i16) -> Self {
         return ShakeDetector {
             last_accel: Accel { x: 0, y: 0, z: 0 },
             treshold: treshold,
@@ -24,7 +24,9 @@ impl ShakeDetector {
             let dX = (self.last_accel.x - accel.x).abs();
             let dY = (self.last_accel.y - accel.y).abs();
             let dZ = (self.last_accel.z - accel.z).abs();
-            let dA = (dX + dY + dZ) / 3;
+            let dA = (dX + dY + dZ);
+            // SerialLogger::println(format!("dA: {}", dA));
+            // false
             dA > self.treshold.into()
         }
         else {

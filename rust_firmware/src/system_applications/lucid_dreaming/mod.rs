@@ -82,7 +82,7 @@ impl LucidDreamingApplication {
         let vibrate_start_time = unsafe { millis() };
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
-        let mut shake_detector = ShakeDetector::new(80);
+        let mut shake_detector = ShakeDetector::new(250);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
@@ -149,7 +149,11 @@ impl LucidDreamingApplication {
                             delay(divider.into());
                             let triggered_breaker = check(last_vibrate_time);
                             if triggered_breaker.is_some() {
-                                return triggered_breaker.unwrap();
+                                // To give more precise timing
+                                let triggered_breaker = triggered_breaker.unwrap();
+                                if !matches!(triggered_breaker, LDVibrationBreaker::AutoDismiss) {
+                                    return triggered_breaker;
+                                }
                             }
                         }
                     }
@@ -160,7 +164,11 @@ impl LucidDreamingApplication {
                             delay(divider.into());
                             let triggered_breaker = check(last_vibrate_time);
                             if triggered_breaker.is_some() {
-                                return triggered_breaker.unwrap();
+                                // To give more precise timing
+                                let triggered_breaker = triggered_breaker.unwrap();
+                                if !matches!(triggered_breaker, LDVibrationBreaker::AutoDismiss) {
+                                    return triggered_breaker;
+                                }
                             }
                         }
                     }
@@ -363,7 +371,7 @@ impl SystemApplication for LucidDreamingApplication {
                 enableAccelerometer();
             }
             let pre_second_end_trigger = self.vibrate_while(
-                &vec![100, 5000],
+                &vec![10, 5000],
                 25 * 1000,
                 LDVibrationBreaker::ShakeAutoDismiss,
             );
@@ -390,6 +398,15 @@ impl SystemApplication for LucidDreamingApplication {
                 SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
                 unsafe {
                     deepSleep(self.rausis_2 * 1000);
+                }
+            }
+            for i in 0..10 {
+                let pattern = vec![(i + 1) * 10, 500];
+                let last_trigger = self.vibrate_while(&pattern, 1000 * 10, LDVibrationBreaker::ShakeAutoDismiss);
+                if matches!(last_trigger, LDVibrationBreaker::Shake) {
+                    unsafe {
+                        deepSleep(60 * 60 * 24 * 1000);
+                    }
                 }
             }
             self.vibrate_while(&vec![100, 500], 0, LDVibrationBreaker::Shake);
