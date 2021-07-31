@@ -82,7 +82,8 @@ impl LucidDreamingApplication {
         let vibrate_start_time = unsafe { millis() };
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
-        let mut shake_detector = ShakeDetector::new(250);
+        let mut shake_detector = ShakeDetector::new(500);
+        shake_detector.enable_slow_shake(50, 400, 500, 10);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
@@ -402,7 +403,11 @@ impl SystemApplication for LucidDreamingApplication {
             }
             for i in 0..10 {
                 let pattern = vec![(i + 1) * 10, 500];
-                let last_trigger = self.vibrate_while(&pattern, 1000 * 10, LDVibrationBreaker::ShakeAutoDismiss);
+                let last_trigger = self.vibrate_while(&pattern, if test {
+                    1000
+                } else {
+                    1000 * 10
+                }, LDVibrationBreaker::ShakeAutoDismiss);
                 if matches!(last_trigger, LDVibrationBreaker::Shake) {
                     unsafe {
                         deepSleep(60 * 60 * 24 * 1000);
