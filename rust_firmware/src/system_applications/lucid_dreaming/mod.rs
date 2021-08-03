@@ -6,16 +6,16 @@ use crate::input::*;
 use crate::non_official_c_bindings::*;
 use crate::system_applications::system_application::*;
 use crate::utils::loop_time;
-use crate::SerialLogger;
 use crate::utils::ShakeDetector;
+use crate::SerialLogger;
 use alloc::format;
-use std::cmp;
 use alloc::sync::Arc;
 use alloc::vec;
-use core::ffi::c_void;
 use core::convert::TryInto;
+use core::ffi::c_void;
 use cstr_core::CString;
 use no_std_compat::sync::Mutex;
+use std::cmp;
 use std::prelude::v1::*;
 
 static test: bool = false;
@@ -82,8 +82,8 @@ impl LucidDreamingApplication {
         let vibrate_start_time = unsafe { millis() };
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
-        let mut shake_detector = ShakeDetector::new(500);
-        shake_detector.enable_slow_shake(50, 400, 500, 10);
+        let mut shake_detector = ShakeDetector::new(700);
+        // shake_detector.enable_slow_shake(50, 400, 500, 10);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
@@ -382,12 +382,12 @@ impl SystemApplication for LucidDreamingApplication {
                 let current_mins = unsafe { getRTCDataAtIndex(1) };
                 let to_add_mins: u8 = cmp::max(1, (current_mins + 1) / 2);
                 let preset_mins = unsafe { getRTCDataAtIndex(1) } + to_add_mins;
-                SerialLogger::println(format!("current_mins: {} new preset_mins: {} to_add_mins: {}", current_mins, preset_mins, to_add_mins));
+                SerialLogger::println(format!(
+                    "current_mins: {} new preset_mins: {} to_add_mins: {}",
+                    current_mins, preset_mins, to_add_mins
+                ));
                 unsafe {
-                    setRTCDataAtIndex(
-                        1,
-                        preset_mins
-                    );
+                    setRTCDataAtIndex(1, preset_mins);
                 }
                 unsafe {
                     setRTCDataAtIndex(0, 2);
@@ -403,11 +403,11 @@ impl SystemApplication for LucidDreamingApplication {
             }
             for i in 0..10 {
                 let pattern = vec![(i + 1) * 10, 500];
-                let last_trigger = self.vibrate_while(&pattern, if test {
-                    1000
-                } else {
-                    1000 * 10
-                }, LDVibrationBreaker::ShakeAutoDismiss);
+                let last_trigger = self.vibrate_while(
+                    &pattern,
+                    if test { 1000 } else { 1000 * 10 },
+                    LDVibrationBreaker::ShakeAutoDismiss,
+                );
                 if matches!(last_trigger, LDVibrationBreaker::Shake) {
                     unsafe {
                         deepSleep(60 * 60 * 24 * 1000);
