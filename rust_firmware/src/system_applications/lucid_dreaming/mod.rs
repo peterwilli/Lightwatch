@@ -70,6 +70,23 @@ impl LucidDreamingApplication {
             result.push(vibration_start);
             result.push(vibration_end);
         }
+
+        let vibration_starts: Vec<u16> = result.clone().into_iter()
+            .enumerate().filter(|&(i, _)| i % 2 == 0)
+            .map(|(_, v)| v)
+            .collect();
+        let max_diff_start = vibration_starts.iter().max().unwrap() - vibration_starts.iter().min().unwrap();
+
+        let vibration_ends: Vec<u16> = result.clone().into_iter()
+            .enumerate().filter(|&(i, _)| i % 2 == 1)
+            .map(|(_, v)| v)
+            .collect();
+        let max_diff_end = vibration_ends.iter().max().unwrap() - vibration_ends.iter().min().unwrap();
+        SerialLogger::println(format!("random_vibration_pattern() max_diff_end: {} max_diff_start: {}", max_diff_end, max_diff_start));
+        if max_diff_end < 50 && max_diff_start < 50 {
+            // Vibration is too static (makes it too much like the second alarm), trying again
+            return Self::random_vibration_pattern();
+        }
         return result;
     }
 
