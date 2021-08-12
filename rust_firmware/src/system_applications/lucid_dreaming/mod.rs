@@ -390,7 +390,7 @@ impl SystemApplication for LucidDreamingApplication {
             }
             let pre_second_end_trigger = self.vibrate_while(
                 &vec![10, 5000],
-                25 * 1000,
+                60 * 1000,
                 LDVibrationBreaker::ShakeAutoDismiss,
             );
             if matches!(pre_second_end_trigger, LDVibrationBreaker::Shake) {
