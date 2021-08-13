@@ -100,7 +100,7 @@ impl LucidDreamingApplication {
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
         let mut shake_detector = ShakeDetector::new(700);
-        shake_detector.enable_slow_shake(900, 10000, 3);
+        shake_detector.enable_slow_shake(900, 10000, 1);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
@@ -394,6 +394,11 @@ impl SystemApplication for LucidDreamingApplication {
                 LDVibrationBreaker::ShakeAutoDismiss,
             );
             if matches!(pre_second_end_trigger, LDVibrationBreaker::Shake) {
+                let pre_second_end_trigger = self.vibrate_while(
+                    &vec![10, 250],
+                    (10 + 250) * 2,
+                    LDVibrationBreaker::AutoDismiss,
+                );
                 SerialLogger::println("Shaken, so we need to retry again".to_string());
                 // We also bump the second alarm with 1 minute.
                 let current_mins = unsafe { getRTCDataAtIndex(1) };
