@@ -7,6 +7,7 @@ extern crate lazy_static;
 extern crate no_std_compat as std;
 use panic_halt as _;
 use std::prelude::v1::*;
+use nn::{NN, HaltCondition};
 mod libc_alloc;
 use libc_alloc::*;
 mod utils;
@@ -36,6 +37,8 @@ pub extern "C" fn rust_bb_init() {
     let mut current_app = HomeScreenApplication::new();
     current_app.init();
     loop {
+        test_stuff();
+        /*
         unsafe {
             loop_time.millis = millis();
             let is_touched = getTouch(&mut touch_input.x, &mut touch_input.y) == 1;
@@ -43,6 +46,20 @@ pub extern "C" fn rust_bb_init() {
             button_input.is_pressed = readIRQ() == 1;
         }
         memory_logging_shortcut::memory_logging_shortcut_check();
-        current_app.r#loop();
+        current_app.r#loop();*/
+    }
+}
+
+
+fn test_stuff() {
+    let nn = NN::new(&[2, 3, 1]);
+    unsafe {
+        for i in 0..10 {
+            let start_time = millis();
+            let results = nn.run(&[i.into(), i.into()]);
+            let end_time = millis();
+            SerialLogger::println(format!("result time: {}", end_time - start_time));
+            delay(1000);
+        }
     }
 }

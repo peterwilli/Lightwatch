@@ -1,0 +1,29 @@
+[package]
+name = "nn"
+version = "0.1.6"
+authors = ["Jack Montgomery <jackm321@gmail.com>"]
+repository = "https://github.com/jackm321/RustNN"
+documentation = "https://jackm321.github.io/RustNN/doc/nn/"
+edition = "2018"
+license = "Apache-2.0"
+readme = "README.md"
+
+description = """
+A multilayer feedforward backpropagation neural network library
+"""
+
+keywords = ["nn", "neural-network", "classifier", "backpropagation",
+            "machine-learning"]
+
+[dependencies]
+time = { version = "0.3.1", default-features = false }
+no-std-compat = { version = "0.4.1", features = [ "alloc" ] }
+log = "0.4.14"
+libm = "0.2.1"
+
+[dev-dependencies]
+env_logger = "0.9.0"
+
+[features]
+default = [ "std" ] # Default to using the std
+std = [ "no-std-compat/std" ]

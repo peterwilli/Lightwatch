@@ -3,6 +3,11 @@ mod tests {
     use alloc::vec::Vec;
     use alloc::vec;
     use crate::println;
+    use crate::Model;
+    
+    fn init() {
+        let _ = env_logger::builder().is_test(true).try_init();
+    }
     
     fn grid_to_train_data(grid: &Vec<Vec<f64>>) -> Vec<(Vec<f64>, Vec<f64>)> {
         let mut train_data: Vec<(Vec<f64>, Vec<f64>)> = Vec::new();
@@ -12,6 +17,30 @@ mod tests {
             }
         }
         return train_data;
+    }
+
+    #[test]
+    fn lib_mask_test() {
+        use core::convert::TryInto;
+        use alloc::string::String;
+        use alloc::format;
+
+        init();
+        let test_data = vec![
+            vec![29, 19, 20],
+            vec![3, 129, 228],
+            vec![191, 238, 23],
+            vec![0, 38, 18]
+        ];
+        let mut model = Model::new(3, 3, 1);
+        model.learn_mask(&test_data);
+        for y in 0..test_data.len() {
+            let mut row_result: Vec<String> = Vec::new();
+            for x in 0..test_data[0].len() {
+                row_result.push(format!("{}", model.get_mask_value(x.try_into().unwrap(), y.try_into().unwrap())));
+            }
+            println!("{}", row_result.join(" "));
+        }
     }
 
     #[test]

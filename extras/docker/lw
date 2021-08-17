@@ -8,6 +8,13 @@ if [ "$CMD" == "build-rust-blob" ]; then
     cd /src/rust_firmware && cargo xbuild --features="xtensa-lx-rt/lx6,xtensa-lx/lx6,esp32-hal"
     cp target/xtensa-esp32-none-elf/debug/liblightwatch_firmware.a ../rust_blob_library/src/esp32
 fi
+if [ "$CMD" == "update-rust-deps" ]; then
+    if [ ! -d "$BUILD_DIR/build" ]; then
+        echo "Unpacking prebuilt Xtensa Rust compiler..."
+        mkdir -p $BUILD_DIR && cd $BUILD_DIR && tar -xf $XTENSA_RUSTC_ARCHIVE_PATH    
+    fi
+    cd /src/rust_firmware && cargo update
+fi
 if [ "$CMD" == "make-rust-bindings" ]; then
     cd /src/rust_firmware && ./make_bindings
 fi

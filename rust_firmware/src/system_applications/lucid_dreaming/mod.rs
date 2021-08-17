@@ -100,7 +100,7 @@ impl LucidDreamingApplication {
         let mut last_vibrate_time = vibrate_start_time;
         let button_count = Mutex::new(0 as u8);
         let mut shake_detector = ShakeDetector::new(700);
-        shake_detector.enable_slow_shake(900, 10000, 1);
+        shake_detector.enable_slow_shake(900, 10000, 3);
         let mut check = |last_vibrate_time: u32| -> Option<LDVibrationBreaker> {
             if unsafe { millis() } - vibrate_start_time < min_wait_ms {
                 if matches!(breaker, LDVibrationBreaker::ShakeAutoDismiss) {
