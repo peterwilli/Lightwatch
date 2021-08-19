@@ -5,15 +5,15 @@
 extern crate lazy_static;
 
 extern crate no_std_compat as std;
+use nn::{HaltCondition, NN};
 use panic_halt as _;
 use std::prelude::v1::*;
-use nn::{NN, HaltCondition};
 mod libc_alloc;
 use libc_alloc::*;
 mod utils;
 use utils::SerialLogger;
-mod pinguin_renderer;
 mod c_bindings;
+mod pinguin_renderer;
 use c_bindings::*;
 mod non_official_c_bindings;
 use non_official_c_bindings::*;
@@ -36,8 +36,8 @@ static A: LibcAllocator = LibcAllocator;
 pub extern "C" fn rust_bb_init() {
     let mut current_app = HomeScreenApplication::new();
     current_app.init();
+    test_stuff();
     loop {
-        test_stuff();
         /*
         unsafe {
             loop_time.millis = millis();
@@ -46,19 +46,27 @@ pub extern "C" fn rust_bb_init() {
             button_input.is_pressed = readIRQ() == 1;
         }
         memory_logging_shortcut::memory_logging_shortcut_check();
-        current_app.r#loop();*/
+        current_app.r#loop(); */
     }
 }
 
-
 fn test_stuff() {
     let nn = NN::new(&[2, 3, 1]);
-    unsafe {
-        for i in 0..10 {
+    let mut results = nn.make_vec_for_inplace(&[0.0, 0.0]);
+    SerialLogger::println(format!("results: {:?}", results));
+    loop {
+        unsafe {
             let start_time = millis();
-            let results = nn.run(&[i.into(), i.into()]);
+            let pixels_amount = 10;
+            for i in 0..pixels_amount {
+                let results = nn.run_inplace(&[i.into(), i.into()], &mut results);
+            }
             let end_time = millis();
-            SerialLogger::println(format!("result time: {}", end_time - start_time));
+            SerialLogger::println(format!(
+                "result time {}px: {}ms",
+                pixels_amount,
+                end_time - start_time
+            ));
             delay(1000);
         }
     }

@@ -12,7 +12,6 @@ cstr_core = "0.2.3"
 no-std-compat = { version = "0.4.1", features = [ "alloc", "compat_sync" ] }
 lazy_static = { version = "1.4.0", features = ["spin_no_std"]}
 impls = "1.0.3" 
-
 nn = { path = "../RustNN", default-features = false }
 # nn = { git = "https://github.com/peterwilli/RustNN.git", branch = "no-std-compat", default-features = false }
 libpinguin = { path = "../PinGUIn/libpinguin", default-features = false }
