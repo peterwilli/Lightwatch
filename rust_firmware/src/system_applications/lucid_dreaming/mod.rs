@@ -62,30 +62,44 @@ impl LucidDreamingApplication {
 
     fn random_vibration_pattern() -> Vec<u16> {
         // Silence not included
-        let pattern_length = 2 + (unsafe { esp_random() } % 5);
         let mut result: Vec<u16> = Vec::new();
-        for i in 0..pattern_length {
-            let vibration_start = 200 + ((unsafe { esp_random() } % 700) as u16);
-            let vibration_end = 200 + ((unsafe { esp_random() } % 700) as u16);
-            result.push(vibration_start);
-            result.push(vibration_end);
-        }
+        loop {
+            result.clear();
+            let pattern_length = 2 + (unsafe { esp_random() } % 5);
+            for i in 0..pattern_length {
+                let vibration_start = 200 + ((unsafe { esp_random() } % 700) as u16);
+                let vibration_end = 200 + ((unsafe { esp_random() } % 700) as u16);
+                result.push(vibration_start);
+                result.push(vibration_end);
+            }
 
-        let vibration_starts: Vec<u16> = result.clone().into_iter()
-            .enumerate().filter(|&(i, _)| i % 2 == 0)
-            .map(|(_, v)| v)
-            .collect();
-        let max_diff_start = vibration_starts.iter().max().unwrap() - vibration_starts.iter().min().unwrap();
+            let vibration_starts: Vec<u16> = result
+                .clone()
+                .into_iter()
+                .enumerate()
+                .filter(|&(i, _)| i % 2 == 0)
+                .map(|(_, v)| v)
+                .collect();
+            let max_diff_start =
+                vibration_starts.iter().max().unwrap() - vibration_starts.iter().min().unwrap();
 
-        let vibration_ends: Vec<u16> = result.clone().into_iter()
-            .enumerate().filter(|&(i, _)| i % 2 == 1)
-            .map(|(_, v)| v)
-            .collect();
-        let max_diff_end = vibration_ends.iter().max().unwrap() - vibration_ends.iter().min().unwrap();
-        SerialLogger::println(format!("random_vibration_pattern() max_diff_end: {} max_diff_start: {}", max_diff_end, max_diff_start));
-        if max_diff_end < 50 && max_diff_start < 50 {
-            // Vibration is too static (makes it too much like the second alarm), trying again
-            return Self::random_vibration_pattern();
+            let vibration_ends: Vec<u16> = result
+                .clone()
+                .into_iter()
+                .enumerate()
+                .filter(|&(i, _)| i % 2 == 1)
+                .map(|(_, v)| v)
+                .collect();
+            let max_diff_end =
+                vibration_ends.iter().max().unwrap() - vibration_ends.iter().min().unwrap();
+            SerialLogger::println(format!(
+                "random_vibration_pattern() max_diff_end: {} max_diff_start: {}",
+                max_diff_end, max_diff_start
+            ));
+            if max_diff_end > 50 || max_diff_start > 50 {
+                // difference is enough to be different from the static vibration (has to "feel" random)
+                break;
+            }
         }
         return result;
     }
@@ -423,6 +437,7 @@ impl SystemApplication for LucidDreamingApplication {
                     deepSleep(self.rausis_2 * 1000);
                 }
             }
+            let burst_time = if test { 5 } else { 15 * 60 };
             for i in 0..10 {
                 let pattern = vec![(i + 1) * 10, 500];
                 let last_trigger = self.vibrate_while(
@@ -432,13 +447,13 @@ impl SystemApplication for LucidDreamingApplication {
                 );
                 if matches!(last_trigger, LDVibrationBreaker::Shake) {
                     unsafe {
-                        deepSleep(60 * 60 * 24 * 1000);
+                        deepSleep(burst_time * 1000);
                     }
                 }
             }
             self.vibrate_while(&vec![100, 500], 0, LDVibrationBreaker::Shake);
             unsafe {
-                deepSleep(60 * 60 * 24 * 1000);
+                deepSleep(burst_time * 1000);
             }
         }
     }

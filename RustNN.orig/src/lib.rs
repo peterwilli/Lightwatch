@@ -58,18 +58,17 @@
 
 #[cfg(not(feature = "std"))]
 extern crate no_std_compat as std;
+use libm::exp;
 use log::debug;
-use rand::Rng;
-use serde::{Deserialize, Serialize};
-use serde_json::{Result, Value};
 use std::iter::{Enumerate, Zip};
 #[cfg(not(feature = "std"))]
 use std::prelude::v1::*;
 use std::slice;
-use std::time::{Duration, Instant};
+use time::Duration;
+#[cfg(feature = "std")]
+use time::Instant;
 use HaltCondition::{Epochs, Timer, MSE};
 use LearningMode::Incremental;
-
 static DEFAULT_LEARNING_RATE: f64 = 0.3f64;
 static DEFAULT_MOMENTUM: f64 = 0f64;
 static DEFAULT_EPOCHS: u32 = 1000;
@@ -185,7 +184,7 @@ impl<'a, 'b> Trainer<'a, 'b> {
 }
 
 /// Neural network
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct NN {
     layers: Vec<Vec<Vec<f64>>>,
     num_inputs: u32,
@@ -198,7 +197,7 @@ impl NN {
     /// number is the output layer, and all numbers between the first and
     /// last are hidden layers. There must be at least two layers in the network.
     pub fn new(layers_sizes: &[u32]) -> NN {
-        let mut rng = rand::thread_rng();
+        // let mut rng = rand::thread_rng();
 
         if layers_sizes.len() < 2 {
             panic!("must have at least two layers");
@@ -222,7 +221,7 @@ impl NN {
             for _ in 0..layer_size {
                 let mut node: Vec<f64> = Vec::new();
                 for _ in 0..prev_layer_size + 1 {
-                    let random_weight: f64 = rng.gen_range(-0.5f64..0.5f64);
+                    let random_weight: f64 = 0.4;
                     node.push(random_weight);
                 }
                 node.shrink_to_fit();
@@ -250,6 +249,13 @@ impl NN {
         self.do_run(inputs).pop().unwrap()
     }
 
+    pub fn run_inplace(&self, inputs: &[f64], results: &mut Vec<Vec<f64>>) {
+        if inputs.len() as u32 != self.num_inputs {
+            panic!("input has a different length than the network's input layer");
+        }
+        self.do_run_inplace(inputs, results);
+    }
+
     /// Takes in vector of examples and returns a `Trainer` struct that is used
     /// to specify options that dictate how the training should proceed.
     /// No actual training will occur until the `go()` method on the
@@ -264,18 +270,6 @@ impl NN {
             learning_mode: Incremental,
             nn: self,
         }
-    }
-
-    /// Encodes the network as a JSON string.
-    pub fn to_json(&self) -> String {
-        let serialized = serde_json::to_string(self).unwrap();
-        return serialized;
-    }
-
-    /// Builds a new network from a JSON string.
-    pub fn from_json(encoded: &str) -> NN {
-        let network: NN = serde_json::from_str(encoded).unwrap();
-        network
     }
 
     fn train_details(
@@ -312,6 +306,8 @@ impl NN {
         let mut prev_deltas = self.make_weights_tracker(0.0f64);
         let mut epochs = 0u32;
         let mut training_error_rate = 0f64;
+
+        #[cfg(feature = "std")]
         let start_time = Instant::now();
 
         loop {
@@ -337,10 +333,7 @@ impl NN {
                         }
                     }
                     Timer(duration) => {
-                        let now = Instant::now();
-                        if start_time.duration_since(now) >= duration {
-                            break;
-                        }
+                        break;
                     }
                 }
             }
@@ -371,6 +364,32 @@ impl NN {
             results.push(layer_results);
         }
         results
+    }
+
+    pub fn make_vec_for_inplace(&self, inputs: &[f64]) -> Vec<Vec<f64>> {
+        let mut results = Vec::new();
+        results.push(inputs.to_vec());
+        for (layer_index, layer) in self.layers.iter().enumerate() {
+            let mut layer_results = Vec::new();
+            for node in layer.iter() {
+                layer_results.push(sigmoid(modified_dotprod(&node, &results[layer_index])))
+            }
+            results.push(layer_results);
+        }
+        results
+    }
+
+    fn do_run_inplace(&self, inputs: &[f64], results: &mut Vec<Vec<f64>>) {
+        for (layer_index, layer) in self.layers.iter().enumerate() {
+            for (node_index, node) in layer.iter().enumerate() {
+                debug!(
+                    "node_index: {} layer_index: {} layer: {:?}",
+                    node_index, layer_index, layer
+                );
+                results[layer_index + 1][node_index] =
+                    sigmoid(modified_dotprod(&node, &results[layer_index + 1]));
+            }
+        }
     }
 
     // updates all weights in the network
@@ -493,7 +512,7 @@ fn modified_dotprod(node: &Vec<f64>, values: &Vec<f64>) -> f64 {
 }
 
 fn sigmoid(y: f64) -> f64 {
-    1f64 / (1f64 + (-y).exp())
+    1f64 / exp(1f64 + (-y))
 }
 
 // takes two arrays and enumerates the iterator produced by zipping each of
@@ -510,7 +529,7 @@ fn calculate_error(results: &Vec<Vec<f64>>, targets: &[f64]) -> f64 {
     let ref last_results = results[results.len() - 1];
     let mut total: f64 = 0f64;
     for (&result, &target) in last_results.iter().zip(targets.iter()) {
-        total += (target - result).powi(2);
+        // total += (target - result).powi(2);
     }
     total / (last_results.len() as f64)
 }
