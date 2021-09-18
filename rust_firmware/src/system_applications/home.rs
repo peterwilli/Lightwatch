@@ -1,11 +1,11 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
-use crate::non_official_c_bindings::*;
 use crate::gui::*;
+use crate::non_official_c_bindings::*;
 
 use crate::system_applications::system_application::*;
-use crate::system_applications::LucidDreamingApplication;
 use crate::system_applications::ActivityApplication;
+use crate::system_applications::LucidDreamingApplication;
 
 use alloc::vec;
 
@@ -15,7 +15,7 @@ use std::prelude::v1::*;
 pub struct HomeScreenApplication {
     gui_renderer: GUIRenderer,
     rtc_date: RTCDate,
-    last_render_time: u32
+    last_render_time: u32,
 }
 
 struct HomeScreenState {
@@ -49,9 +49,9 @@ impl HomeScreenApplication {
             rtc_getDateTime(&mut self.rtc_date);
         }
         let mut time_label: &mut Label = self.gui_renderer.elements[3]
-                .as_any()
-                .downcast_mut::<Label>()
-                .expect("Wasn't a label!");
+            .as_any()
+            .downcast_mut::<Label>()
+            .expect("Wasn't a label!");
         time_label.text = Some(format!("{} {}", self.rtc_date.hour, self.rtc_date.minute));
         self.gui_renderer.needs_redraw = true;
     }
@@ -61,19 +61,19 @@ impl HomeScreenApplication {
             rtc_getDateTime(&mut self.rtc_date);
         }
         let mut date_label: &mut Label = self.gui_renderer.elements[4]
-                .as_any()
-                .downcast_mut::<Label>()
-                .expect("Wasn't a label!");
+            .as_any()
+            .downcast_mut::<Label>()
+            .expect("Wasn't a label!");
         date_label.text = Some(format!("{} {}", self.rtc_date.day, self.rtc_date.month));
         self.gui_renderer.needs_redraw = true;
     }
 
     fn update_steps(&mut self) {
         let mut step_label: &mut Label = self.gui_renderer.elements[5]
-                .as_any()
-                .downcast_mut::<Label>()
-                .expect("Wasn't a label!");
-        step_label.text = Some(format!("{} steps", unsafe {getStepCount()}));
+            .as_any()
+            .downcast_mut::<Label>()
+            .expect("Wasn't a label!");
+        step_label.text = Some(format!("{} steps", unsafe { getStepCount() }));
         self.gui_renderer.needs_redraw = true;
     }
 }
@@ -89,9 +89,9 @@ impl SystemApplication for HomeScreenApplication {
                     day: 0,
                     hour: 0,
                     minute: 0,
-                    second: 0
+                    second: 0,
                 },
-                last_render_time: 0
+                last_render_time: 0,
             }
         };
     }
@@ -115,6 +115,7 @@ impl SystemApplication for HomeScreenApplication {
             unsafe {
                 fillScreen(0);
                 setTextColor(400);
+                enableAccelerometer();
                 enableStepCounter();
             }
             let mut label = Box::new(Label::new(10, 10, 100, 100));
@@ -140,7 +141,6 @@ impl SystemApplication for HomeScreenApplication {
 
             let mut label = Box::new(Label::new(10, 150, 100, 100));
             self.gui_renderer.elements.push(label);
-            
             let mut label = Box::new(Label::new(10, 180, 100, 100));
             self.gui_renderer.elements.push(label);
 

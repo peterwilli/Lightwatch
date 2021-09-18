@@ -391,10 +391,17 @@ impl SystemApplication for LucidDreamingApplication {
                     self.rausis_2 = 5;
                 }
             }
+            for i in 0..30 {
+                let pre_second_end_trigger = self.vibrate_while(
+                    &vec![30, 100 + (i * 30)],
+                    1000 * 60,
+                    LDVibrationBreaker::AutoDismiss,
+                );
+            }
             SerialLogger::println(format!("second alarm set to {} seconds", self.rausis_2));
             unsafe {
                 setRTCDataAtIndex(0, 2);
-                deepSleep(self.rausis_2 * 1000);
+                deepSleep(60 * 60 * 24 * 1000);
             }
         } else if self.alarm_state == 2 {
             unsafe {

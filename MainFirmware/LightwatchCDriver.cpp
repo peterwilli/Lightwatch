@@ -21,6 +21,10 @@ void setRTCDataAtIndex(uint16_t index, uint8_t data) {
   RTC_DATA[index] = data;
 }
 
+void setDisplayState(bool displayOn) {
+  ttgo->power->setPowerOutPut(AXP202_LDO2, displayOn);
+}
+
 void deepSleep(uint32_t sleepMillis) {
   // Set screen and touch to sleep mode
   ttgo->displaySleep();
@@ -87,10 +91,12 @@ void displayOff() {
 
 void displaySleep() {
   ttgo->displaySleep();
+  ttgo->power->setPowerOutPut(AXP202_LDO2, false);
 }
 
 void displayWakeup() {
   ttgo->displayWakeup();
+  ttgo->power->setPowerOutPut(AXP202_LDO2, true);
 }
 
 void vibrate(uint8_t duration) {
@@ -206,6 +212,10 @@ void enableAccelerometer() {
 }
 
 void enableStepCounter() {
+  // Enable BMA423 accelerometer
+  // Warning : To use steps, you must first enable the accelerometer
+  ttgo->bma->enableAccel();
+  
   // Enable BMA423 step count feature
   ttgo->bma->enableFeature(BMA423_STEP_CNTR, true);
   ttgo->bma->resetStepCounter();
