@@ -1,8 +1,10 @@
 use alloc::string::String;
 use alloc::vec::Vec;
 
+#[derive(PartialEq)]
 pub enum Extra {
     BackgroundLoop,
+    NoThrottling,
 }
 
 pub struct SystemApplicationInfo {

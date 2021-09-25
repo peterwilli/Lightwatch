@@ -16,7 +16,6 @@ mod c_bindings;
 mod pinguin_renderer;
 use c_bindings::*;
 mod energy_manager;
-use energy_manager::EnergyManager;
 mod non_official_c_bindings;
 use non_official_c_bindings::*;
 mod input;
@@ -36,7 +35,6 @@ extern crate alloc;
 static A: LibcAllocator = LibcAllocator;
 #[no_mangle]
 pub extern "C" fn rust_bb_init() {
-    let mut energy_manager = EnergyManager::new();
     let mut current_app = HomeScreenApplication::new();
     current_app.init();
     // test_stuff();
@@ -45,17 +43,10 @@ pub extern "C" fn rust_bb_init() {
             loop_time.millis = millis();
             let is_touched = getTouch(&mut touch_input.x, &mut touch_input.y) == 1;
             touch_input.is_touched = is_touched;
-            if energy_manager.screen_off && is_touched {
-                touch_input.is_touched = false;
-                energy_manager.wake();
-            }
             button_input.is_pressed = readIRQ() == 1;
         }
         memory_logging_shortcut::memory_logging_shortcut_check();
-        if !energy_manager.screen_off {
-            current_app.r#loop();
-        }
-        energy_manager.tick();
+        current_app.r#loop();
     }
 }
 

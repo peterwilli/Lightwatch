@@ -1,6 +1,8 @@
 use crate::alloc::string::ToString;
 use crate::c_bindings::*;
+use crate::energy_manager::EnergyManager;
 use crate::gui::*;
+use crate::input::touch_input;
 use crate::non_official_c_bindings::*;
 
 use crate::system_applications::system_application::*;
@@ -14,6 +16,7 @@ use std::prelude::v1::*;
 
 pub struct HomeScreenApplication {
     gui_renderer: GUIRenderer,
+    energy_manager: EnergyManager,
     rtc_date: RTCDate,
     last_render_time: u32,
 }
@@ -92,6 +95,7 @@ impl SystemApplication for HomeScreenApplication {
                     second: 0,
                 },
                 last_render_time: 0,
+                energy_manager: EnergyManager::new(),
             }
         };
     }
@@ -151,28 +155,41 @@ impl SystemApplication for HomeScreenApplication {
     }
 
     fn r#loop(&mut self) {
-        let cur_render_time = unsafe { millis() };
-        if cur_render_time - self.last_render_time > 10000 {
-            self.update_time();
-            self.update_date();
-            self.update_steps();
-            self.last_render_time = cur_render_time;
+        if self.energy_manager.screen_off && unsafe { touch_input.is_touched } {
+            unsafe {
+                touch_input.is_touched = false;
+            }
+            self.energy_manager.wake();
+            return;
         }
         let mut home_screen_state = HOME_SCREEN_STATE.lock();
         if home_screen_state.current_application.is_none() {
             drop(home_screen_state);
-            if self.gui_renderer.will_redraw() {
-                unsafe {
-                    fillScreen(0);
+            if !self.energy_manager.screen_off {
+                let cur_render_time = unsafe { millis() };
+                if cur_render_time - self.last_render_time > 10000 {
+                    self.update_time();
+                    self.update_date();
+                    self.update_steps();
+                    self.last_render_time = cur_render_time;
                 }
+                if self.gui_renderer.will_redraw() {
+                    unsafe {
+                        fillScreen(0);
+                    }
+                }
+                self.gui_renderer.r#loop();
             }
-            self.gui_renderer.r#loop();
         } else {
             let current_app = home_screen_state.current_application.as_mut().unwrap();
-            current_app.r#loop();
+            if current_app.get_info().extras.contains(&Extra::NoThrottling) {
+                current_app.r#loop();
+            } else {
+                if !self.energy_manager.screen_off {
+                    current_app.r#loop();
+                }
+            }
         }
-        unsafe {
-            delay(100);
-        }
+        self.energy_manager.tick();
     }
 }

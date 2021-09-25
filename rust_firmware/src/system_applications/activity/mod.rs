@@ -33,7 +33,7 @@ impl SystemApplication for ActivityApplication {
             id: "lightwatch.activity".to_string(),
             name: "Activity".to_string(),
             description: "Fitness activity application".to_string(),
-            extras: vec![Extra::BackgroundLoop],
+            extras: vec![Extra::BackgroundLoop, Extra::NoThrottling],
         };
     }
 
