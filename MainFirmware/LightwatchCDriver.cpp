@@ -103,6 +103,25 @@ void vibrate(uint8_t duration) {
   ttgo->motor->onec(duration);
 }
 
+void getVoltage(float &voltage) {
+  voltage = ttgo->power->getBattVoltage();
+}
+
+void getBattDischargeCurrent(float &current) {
+  current = ttgo->power->getBattDischargeCurrent();
+}
+
+void getBattChargeCurrent(float &current) {
+  current = ttgo->power->getBattChargeCurrent();
+}
+
+uint8_t isCharging() {
+   ttgo->power->adc1Enable(AXP202_BATT_CUR_ADC1 | AXP202_BATT_VOL_ADC1 |
+                      AXP202_VBUS_VOL_ADC1 | AXP202_VBUS_CUR_ADC1,
+                      true);
+  return ttgo->power->isChargeing();
+}
+
 void setBrightness(uint8_t brightness) {
     ttgo->bl->adjust(brightness);
 }

@@ -51,7 +51,7 @@ impl HomeScreenApplication {
         unsafe {
             rtc_getDateTime(&mut self.rtc_date);
         }
-        let mut time_label: &mut Label = self.gui_renderer.elements[3]
+        let mut time_label: &mut Label = self.gui_renderer.elements[2]
             .as_any()
             .downcast_mut::<Label>()
             .expect("Wasn't a label!");
@@ -63,7 +63,7 @@ impl HomeScreenApplication {
         unsafe {
             rtc_getDateTime(&mut self.rtc_date);
         }
-        let mut date_label: &mut Label = self.gui_renderer.elements[4]
+        let mut date_label: &mut Label = self.gui_renderer.elements[3]
             .as_any()
             .downcast_mut::<Label>()
             .expect("Wasn't a label!");
@@ -72,7 +72,7 @@ impl HomeScreenApplication {
     }
 
     fn update_steps(&mut self) {
-        let mut step_label: &mut Label = self.gui_renderer.elements[5]
+        let mut step_label: &mut Label = self.gui_renderer.elements[4]
             .as_any()
             .downcast_mut::<Label>()
             .expect("Wasn't a label!");
@@ -133,13 +133,6 @@ impl SystemApplication for HomeScreenApplication {
             }));
             self.gui_renderer.elements.push(button);
 
-            let mut button = Box::new(Button::new(10, 90, 100, 100));
-            button.text = Some("Lucid dreaming".to_string());
-            button.on_tap = Some(Box::new(|| {
-                launch_app(Box::new(LucidDreamingApplication::new()));
-            }));
-            self.gui_renderer.elements.push(button);
-
             let mut label = Box::new(Label::new(10, 120, 100, 100));
             self.gui_renderer.elements.push(label);
 
@@ -155,12 +148,15 @@ impl SystemApplication for HomeScreenApplication {
     }
 
     fn r#loop(&mut self) {
-        if self.energy_manager.screen_off && unsafe { touch_input.is_touched } {
-            unsafe {
-                touch_input.is_touched = false;
+        if unsafe { touch_input.is_touched } {
+            self.energy_manager.did_interact();
+            if self.energy_manager.screen_off {
+                unsafe {
+                    touch_input.is_touched = false;
+                }
+                self.energy_manager.wake();
+                return;
             }
-            self.energy_manager.wake();
-            return;
         }
         let mut home_screen_state = HOME_SCREEN_STATE.lock();
         if home_screen_state.current_application.is_none() {
@@ -179,6 +175,9 @@ impl SystemApplication for HomeScreenApplication {
                     }
                 }
                 self.gui_renderer.r#loop();
+                unsafe {
+                    delay(100);
+                }
             }
         } else {
             let current_app = home_screen_state.current_application.as_mut().unwrap();

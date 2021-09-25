@@ -64,8 +64,11 @@ extern "C" {
                      uint8_t second);
     void rtc_getDateTime(RTCDate &rtcDate);
     
-    
     // Power management
+    uint8_t isCharging();
+    void getBattChargeCurrent(float &current);
+    void getBattDischargeCurrent(float &current);
+    
     void displaySleep();
     void displayWakeup();
     void powerOffEverythingExceptESP32();

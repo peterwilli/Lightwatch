@@ -22,6 +22,9 @@ impl EnergyManager {
             }
             self.screen_off = false;
         }
+    }
+
+    pub fn did_interact(&mut self) {
         unsafe {
             self.last_interacted = loop_time.millis;
         }
