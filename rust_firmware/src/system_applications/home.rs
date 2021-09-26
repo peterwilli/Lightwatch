@@ -119,7 +119,6 @@ impl SystemApplication for HomeScreenApplication {
             unsafe {
                 fillScreen(0);
                 setTextColor(400);
-                enableAccelerometer();
                 enableStepCounter();
                 setCpuFrequencyMhz(20);
             }

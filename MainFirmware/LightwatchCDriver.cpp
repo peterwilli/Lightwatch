@@ -25,6 +25,35 @@ void setDisplayState(bool displayOn) {
   ttgo->power->setPowerOutPut(AXP202_LDO2, displayOn);
 }
 
+void lightSleepUntilTapOrRaiseArm() {
+  BMA *sensor = ttgo->bma;
+
+  // Accel parameter structure
+  Acfg cfg;
+  cfg.odr = BMA4_OUTPUT_DATA_RATE_100HZ;
+  cfg.range = BMA4_ACCEL_RANGE_4G;
+  cfg.bandwidth = BMA4_ACCEL_NORMAL_AVG4;
+  cfg.perf_mode = BMA4_CONTINUOUS_MODE;
+  sensor->accelConfig(cfg);
+  
+  // Active and BMA 423
+  sensor->enableAccel();
+
+  // Activates the wake-up function of the BMA423
+  sensor->enableFeature(BMA423_WAKEUP, true);
+  
+  // Send a signal on pin 39 of the ESP32 as soon as movement is detected
+  sensor->enableWakeupInterrupt();
+  sensor->enableStepCountInterrupt(false);
+  ttgo->power->enableIRQ(AXP202_PEK_SHORTPRESS_IRQ | AXP202_VBUS_REMOVED_IRQ | AXP202_VBUS_CONNECT_IRQ | AXP202_CHARGING_IRQ, true);
+  ttgo->power->clearIRQ();
+
+  gpio_wakeup_enable((gpio_num_t)BMA423_INT1, GPIO_INTR_LOW_LEVEL);
+  gpio_wakeup_enable ((gpio_num_t)AXP202_INT, GPIO_INTR_LOW_LEVEL);
+  esp_sleep_enable_gpio_wakeup();
+  esp_light_sleep_start();
+}
+
 void lightSleepUntilSidePress() {
   esp_sleep_enable_ext1_wakeup(GPIO_SEL_35, ESP_EXT1_WAKEUP_ALL_LOW);
   esp_light_sleep_start();

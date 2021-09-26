@@ -77,6 +77,7 @@ extern "C" {
     void deepSleep(uint32_t sleepMillis);
     void deepSleepUntilSidePress();
     void lightSleepUntilSidePress();
+    void lightSleepUntilTapOrRaiseArm();
 
     // Drawing
     void setTextSize(uint8_t size);

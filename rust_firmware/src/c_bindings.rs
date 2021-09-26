@@ -184,6 +184,7 @@ extern "C" {
     pub fn deepSleep(sleepMillis: u32);
 }
 extern "C" {
+    pub fn lightSleepUntilTapOrRaiseArm();
     pub fn deepSleepUntilSidePress();
     pub fn lightSleepUntilSidePress();
 }
