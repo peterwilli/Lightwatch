@@ -39,7 +39,7 @@ impl EnergyManager {
         }
         if (unsafe { loop_time.millis } - self.last_interacted) > 5000 {
             unsafe {
-                displaySleep();
+                lightSleepUntilSidePress();
             }
             self.screen_off = true;
         }

@@ -121,6 +121,7 @@ impl SystemApplication for HomeScreenApplication {
                 setTextColor(400);
                 enableAccelerometer();
                 enableStepCounter();
+                setCpuFrequencyMhz(20);
             }
             let mut label = Box::new(Label::new(10, 10, 100, 100));
             label.text = Some("Hello Loves".to_string());

@@ -25,6 +25,37 @@ void setDisplayState(bool displayOn) {
   ttgo->power->setPowerOutPut(AXP202_LDO2, displayOn);
 }
 
+void lightSleepUntilSidePress() {
+  esp_sleep_enable_ext1_wakeup(GPIO_SEL_35, ESP_EXT1_WAKEUP_ALL_LOW);
+  esp_light_sleep_start();
+}
+
+void deepSleepUntilSidePress() {
+  // Set screen and touch to sleep mode
+  ttgo->displaySleep();
+
+  /*
+  When using T - Watch2020V1, you can directly call power->powerOff(),
+  if you use the 2019 version of TWatch, choose to turn off
+  according to the power you need to turn off
+  */
+#ifdef LILYGO_WATCH_2020_V1
+  ttgo->powerOff();
+  // LDO2 is used to power the display, and LDO2 can be turned off if needed
+  // power->setPowerOutPut(AXP202_LDO2, false);
+#else
+  ttgo->power->setPowerOutPut(AXP202_LDO3, false);
+  ttgo->power->setPowerOutPut(AXP202_LDO4, false);
+  ttgo->power->setPowerOutPut(AXP202_LDO2, false);
+  // The following power channels are not used
+  ttgo->power->setPowerOutPut(AXP202_EXTEN, false);
+  ttgo->power->setPowerOutPut(AXP202_DCDC2, false);
+#endif
+
+    esp_sleep_enable_ext1_wakeup(GPIO_SEL_35, ESP_EXT1_WAKEUP_ALL_LOW);
+    esp_deep_sleep_start();
+}
+
 void deepSleep(uint32_t sleepMillis) {
   // Set screen and touch to sleep mode
   ttgo->displaySleep();
@@ -116,9 +147,7 @@ void getBattChargeCurrent(float &current) {
 }
 
 uint8_t isCharging() {
-   ttgo->power->adc1Enable(AXP202_BATT_CUR_ADC1 | AXP202_BATT_VOL_ADC1 |
-                      AXP202_VBUS_VOL_ADC1 | AXP202_VBUS_CUR_ADC1,
-                      true);
+  ttgo->power->adc1Enable(AXP202_BATT_CUR_ADC1 | AXP202_BATT_VOL_ADC1 | AXP202_VBUS_VOL_ADC1 | AXP202_VBUS_CUR_ADC1, true);
   return ttgo->power->isChargeing();
 }
 
@@ -178,39 +207,39 @@ void enableAccelerometer() {
   // Accel parameter structure
   Acfg cfg;
   /*!
-      Output data rate in Hz, Optional parameters:
-          - BMA4_OUTPUT_DATA_RATE_0_78HZ
-          - BMA4_OUTPUT_DATA_RATE_1_56HZ
-          - BMA4_OUTPUT_DATA_RATE_3_12HZ
-          - BMA4_OUTPUT_DATA_RATE_6_25HZ
-          - BMA4_OUTPUT_DATA_RATE_12_5HZ
-          - BMA4_OUTPUT_DATA_RATE_25HZ
-          - BMA4_OUTPUT_DATA_RATE_50HZ
-          - BMA4_OUTPUT_DATA_RATE_100HZ
-          - BMA4_OUTPUT_DATA_RATE_200HZ
-          - BMA4_OUTPUT_DATA_RATE_400HZ
-          - BMA4_OUTPUT_DATA_RATE_800HZ
-          - BMA4_OUTPUT_DATA_RATE_1600HZ
+    Output data rate in Hz, Optional parameters:
+        - BMA4_OUTPUT_DATA_RATE_0_78HZ
+        - BMA4_OUTPUT_DATA_RATE_1_56HZ
+        - BMA4_OUTPUT_DATA_RATE_3_12HZ
+        - BMA4_OUTPUT_DATA_RATE_6_25HZ
+        - BMA4_OUTPUT_DATA_RATE_12_5HZ
+        - BMA4_OUTPUT_DATA_RATE_25HZ
+        - BMA4_OUTPUT_DATA_RATE_50HZ
+        - BMA4_OUTPUT_DATA_RATE_100HZ
+        - BMA4_OUTPUT_DATA_RATE_200HZ
+        - BMA4_OUTPUT_DATA_RATE_400HZ
+        - BMA4_OUTPUT_DATA_RATE_800HZ
+        - BMA4_OUTPUT_DATA_RATE_1600HZ
   */
   cfg.odr = BMA4_OUTPUT_DATA_RATE_100HZ;
   /*!
-      G-range, Optional parameters:
-          - BMA4_ACCEL_RANGE_2G
-          - BMA4_ACCEL_RANGE_4G
-          - BMA4_ACCEL_RANGE_8G
-          - BMA4_ACCEL_RANGE_16G
+    G-range, Optional parameters:
+        - BMA4_ACCEL_RANGE_2G
+        - BMA4_ACCEL_RANGE_4G
+        - BMA4_ACCEL_RANGE_8G
+        - BMA4_ACCEL_RANGE_16G
   */
   cfg.range = BMA4_ACCEL_RANGE_2G;
   /*!
-      Bandwidth parameter, determines filter configuration, Optional parameters:
-          - BMA4_ACCEL_OSR4_AVG1
-          - BMA4_ACCEL_OSR2_AVG2
-          - BMA4_ACCEL_NORMAL_AVG4
-          - BMA4_ACCEL_CIC_AVG8
-          - BMA4_ACCEL_RES_AVG16
-          - BMA4_ACCEL_RES_AVG32
-          - BMA4_ACCEL_RES_AVG64
-          - BMA4_ACCEL_RES_AVG128
+    Bandwidth parameter, determines filter configuration, Optional parameters:
+        - BMA4_ACCEL_OSR4_AVG1
+        - BMA4_ACCEL_OSR2_AVG2
+        - BMA4_ACCEL_NORMAL_AVG4
+        - BMA4_ACCEL_CIC_AVG8
+        - BMA4_ACCEL_RES_AVG16
+        - BMA4_ACCEL_RES_AVG32
+        - BMA4_ACCEL_RES_AVG64
+        - BMA4_ACCEL_RES_AVG128
   */
   cfg.bandwidth = BMA4_ACCEL_NORMAL_AVG4;
 

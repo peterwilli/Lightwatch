@@ -184,6 +184,10 @@ extern "C" {
     pub fn deepSleep(sleepMillis: u32);
 }
 extern "C" {
+    pub fn deepSleepUntilSidePress();
+    pub fn lightSleepUntilSidePress();
+}
+extern "C" {
     pub fn setTextSize(size: u8);
 }
 extern "C" {

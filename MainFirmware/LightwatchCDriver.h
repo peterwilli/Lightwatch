@@ -75,6 +75,8 @@ extern "C" {
     uint8_t getRTCDataAtIndex(uint16_t index);
     void setRTCDataAtIndex(uint16_t index, uint8_t data);
     void deepSleep(uint32_t sleepMillis);
+    void deepSleepUntilSidePress();
+    void lightSleepUntilSidePress();
 
     // Drawing
     void setTextSize(uint8_t size);
