@@ -4,6 +4,7 @@ use crate::utils::loop_time;
 
 pub struct EnergyManager {
     last_interacted: u32,
+    pub no_throttling: bool,
     pub screen_off: bool,
 }
 
@@ -11,6 +12,7 @@ impl EnergyManager {
     pub fn new() -> Self {
         return EnergyManager {
             last_interacted: 0,
+            no_throttling: false,
             screen_off: false,
         };
     }
@@ -38,8 +40,15 @@ impl EnergyManager {
             return;
         }
         if (unsafe { loop_time.millis } - self.last_interacted) > 5000 {
-            unsafe {
-                lightSleepUntilSidePress();
+            if self.no_throttling {
+                unsafe {
+                    displaySleep();
+                }
+            }
+            else {
+                unsafe {
+                    lightSleepUntilSidePress();
+                }
             }
             self.screen_off = true;
         }

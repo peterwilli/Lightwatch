@@ -183,10 +183,12 @@ impl SystemApplication for HomeScreenApplication {
             let current_app = home_screen_state.current_application.as_mut().unwrap();
             if current_app.get_info().extras.contains(&Extra::NoThrottling) {
                 current_app.r#loop();
+                self.energy_manager.no_throttling = true;
             } else {
                 if !self.energy_manager.screen_off {
                     current_app.r#loop();
                 }
+                self.energy_manager.no_throttling = false;
             }
         }
         self.energy_manager.tick();
